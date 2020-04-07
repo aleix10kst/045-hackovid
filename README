@@ -1,0 +1,12 @@
+APP instruccions:
+https://nodejs.org/en/
+baixarse la versio LTS
+
+un cop instalat:
+npm install -g @ionic/cli
+
+amb aixo t'instales el client
+
+per iniciar l'app
+ionic serve
+
