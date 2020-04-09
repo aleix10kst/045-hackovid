@@ -1,30 +1,44 @@
-import { Component, ViewChild } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import { Nav, Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { HomePage } from '../pages/home/home';
 import { ListPage } from '../pages/list/list';
+import {UserPage} from "../pages/user/user";
+import {LoginPage} from "../pages/login/login";
+import {LoginService} from "../services/login.service";
 
 @Component({
   templateUrl: 'app.html'
 })
-export class MyApp {
+export class MyApp implements OnInit{
   @ViewChild(Nav) nav: Nav;
 
-  rootPage: any = HomePage;
+  rootPage: any;
 
   pages: Array<{title: string, component: any}>;
 
-  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen) {
+  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, private loginService: LoginService) {
     this.initializeApp();
 
     // used for an example of ngFor and navigation
     this.pages = [
       { title: 'Home', component: HomePage },
-      { title: 'List', component: ListPage }
+      { title: 'List', component: ListPage },
+      { title: 'Usuari', component: UserPage}
     ];
+  }
 
+  ngOnInit(): void {
+    this.loginService.isLoggedIn().then((response) => {
+      console.log(response);
+      if (!!response) {
+        this.rootPage = HomePage;
+      } else {
+        this.rootPage = LoginPage;
+      }
+    })
   }
 
   initializeApp() {
@@ -40,5 +54,13 @@ export class MyApp {
     // Reset the content nav to have just this page
     // we wouldn't want the back button to show in this scenario
     this.nav.setRoot(page.component);
+  }
+
+  onClickLogout(): void {
+    this.loginService.logout().then(() => {
+      this.nav.setRoot(LoginPage);
+    }).catch(() => {
+      console.error('Unable to logout');
+    })
   }
 }

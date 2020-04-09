@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Usuari</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="form">
+    <ion-list>
+
+      <ion-item>
+        <ion-label floating>Nom d'usuari</ion-label>
+        <ion-input type="text" formControlName="username"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label floating>Nom</ion-label>
+        <ion-input type="text" formControlName="name"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label floating>Cognoms</ion-label>
+        <ion-input type="text" formControlName="lastname"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label floating>Telèfon</ion-label>
+        <ion-input type="text" formControlName="phone"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label floating>Email</ion-label>
+        <ion-input type="text" formControlName="email"></ion-input>
+      </ion-item>
+    </ion-list>
+
+    <div padding>
+      <button ion-button block (click)="onClickSave()">Desa els canvis</button>
+    </div>
+  </form>
+</ion-content>
