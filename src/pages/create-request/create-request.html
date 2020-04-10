@@ -14,14 +14,18 @@
         <ion-label floating>Data</ion-label>
         <ion-datetime displayFormat="MM/DD/YYYY" formControlName="deliveryDate"></ion-datetime>
       </ion-item>
-      <ion-item>
+      <div id="mapSelector">
+
+      </div>
+
+      <!--<ion-item>
         <ion-label floating>Lat</ion-label>
         <ion-input type="number" formControlName="lat"></ion-input>
       </ion-item>
       <ion-item>
         <ion-label floating>Lon</ion-label>
         <ion-input type="number" formControlName="lon"></ion-input>
-      </ion-item>
+      </ion-item>-->
     </ion-list>
     <button ion-button color="secondary" block (click)="save()">Crea</button>
     <button ion-button color="danger" block margin-top (click)="cancel()">Cancel·la</button>
