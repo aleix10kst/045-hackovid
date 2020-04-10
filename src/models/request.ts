@@ -5,6 +5,8 @@ export interface Request {
   userId: string;
   location: any;
 
+  status: 'pending' | 'accepted' | 'completed';
+
   // Created metadata
   createdAt: Date;
   createdBy: string;

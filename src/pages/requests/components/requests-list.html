@@ -6,7 +6,7 @@
       <h3>Location</h3>
       <p>{{ request.description}}</p>
     </ion-item>
-    <ion-item>
+    <ion-item *ngIf="!(requests | async)">
       <h2>Actualment no tens cap petició</h2>
     </ion-item>
   </ion-list>
