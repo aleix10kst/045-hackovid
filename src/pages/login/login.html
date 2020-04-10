@@ -1,0 +1,40 @@
+<ion-content>
+  <ion-grid align-items-center>
+    <ion-row padding-horizontal text-center>
+      <ion-col>
+        <h2>Harrisson fork</h2>
+      </ion-col>
+    </ion-row>
+    <ion-row justify-content-center class="login-form">
+      <form [formGroup]="form">
+        <ion-row>
+          <ion-item>
+            <ion-label floating>Nom d'usuari</ion-label>
+            <ion-input type="text" formControlName="email"></ion-input>
+          </ion-item>
+        </ion-row>
+        <ion-row>
+          <ion-item>
+            <ion-label floating>Contrasenya</ion-label>
+            <ion-input type="password" formControlName="password"></ion-input>
+          </ion-item>
+        </ion-row>
+        <ion-row *ngIf="showError">
+          <ion-item>
+            <span style="color: darkred">{{ errorMessage }}</span>
+          </ion-item>
+        </ion-row>
+        <ion-row justify-content-center padding-top>
+          <button ion-button (click)="onClickLogin()">Accedeix</button>
+        </ion-row>
+        <ion-row justify-content-center padding-top>
+          <button ion-button outline class="social-button" (click)="onClickLoginWithSocialProvider('google')">Google</button>
+          <button ion-button outline class="social-button" (click)="onClickLoginWithSocialProvider('facebook')">Facebook</button>
+        </ion-row>
+        <ion-row justify-content-center padding-top>
+          <button ion-button color="light" (click)="onClickRegistra()">Registra</button>
+        </ion-row>
+      </form>
+    </ion-row>
+  </ion-grid>
+</ion-content>
