@@ -18,6 +18,7 @@ import {AngularFireAuthModule} from "@angular/fire/auth";
 import {LoginService} from "../services/login.service";
 import {RequestsModule} from "../pages/requests/requests.module";
 import {CreateRequestPage} from "../pages/create-request/create-request";
+import {UserSevice} from "../services/user.sevice";
 
 const firebaseConfig = {
 
@@ -56,7 +57,8 @@ const firebaseConfig = {
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    LoginService
+    LoginService,
+    UserSevice
   ]
 })
 export class AppModule {}

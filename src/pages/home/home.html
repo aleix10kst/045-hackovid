@@ -10,11 +10,6 @@
 <ion-content  no-padding >
 
   <div id="map"></div>
-  <ion-fab right bottom>
-    <button ion-fab color="primary" (click)="onClickAddRequest()"><ion-icon name="add" ></ion-icon></button>
-  </ion-fab>
-
-
 
   <div *ngIf="selectedRequest" class="requestLabel">
     <h2>{{ selectedRequest.title }}</h2>
@@ -25,5 +20,7 @@
     </button>
   </div>
 
-
+  <ion-fab right bottom *ngIf="canAddRequests">
+    <button ion-fab color="primary" (click)="onClickAddRequest()"><ion-icon name="add" ></ion-icon></button>
+  </ion-fab>
 </ion-content>

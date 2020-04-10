@@ -1,4 +1,5 @@
 export interface Request {
+  uuid: string;
   title: string;
   description: string;
   deliveryDate?: Date;

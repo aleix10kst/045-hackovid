@@ -3,9 +3,8 @@ import {NavController} from "ionic-angular";
 import {HomePage} from "../home/home";
 import {AngularFireAuth} from "@angular/fire/auth";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import UserCredential = firebase.auth.UserCredential;
-import {AngularFirestore, AngularFirestoreCollection} from "@angular/fire/firestore";
-import {User} from "../user/user";
+import {AngularFirestore} from "@angular/fire/firestore";
+import {LoginService} from "../../services/login.service";
 
 @Component({
   selector: 'register-page',
@@ -15,10 +14,8 @@ export class RegisterPage implements OnInit {
 
   form: FormGroup;
 
-  private userCollection$: AngularFirestoreCollection<User>;
 
-  constructor(private navController: NavController, private afAuth: AngularFireAuth, private fb: FormBuilder, private afs: AngularFirestore) {
-    this.userCollection$ = this.afs.collection('users');
+  constructor(private navController: NavController, private afAuth: AngularFireAuth, private fb: FormBuilder, private afs: AngularFirestore, private loginService: LoginService) {
   }
 
   ngOnInit(): void {
@@ -26,6 +23,7 @@ export class RegisterPage implements OnInit {
       email: ['', [Validators.required]],
       password: ['', [Validators.required]],
       password2: ['', [Validators.required]],
+      codiEntitat: ['']
     })
   }
 
@@ -34,14 +32,14 @@ export class RegisterPage implements OnInit {
   }
 
   onClickRegister(): void {
-    const { email, password } = this.form.getRawValue();
-    this.afAuth.auth.createUserWithEmailAndPassword(email, password).then((response: UserCredential) => {
-      const user = {email: response.user.email, name: response.user.displayName, uid: response.user.uid};
-      this.userCollection$.doc(response.user.uid).set(user);
-      this.navController.setRoot(HomePage);
-    }).catch((err) => {
-      console.error(err);
-    })
+    const {email, password, codiEntitat} = this.form.getRawValue();
+    this.loginService.createWithUserEmail(email, password, codiEntitat)
+      .then(() => {
+        this.navController.setRoot(HomePage);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
 
   }
 }
