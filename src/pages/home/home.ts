@@ -20,6 +20,8 @@ import {AngularFirestoreCollection} from "@angular/fire/firestore";
 import {Request} from "../../models/request";
 import {Observable} from "rxjs";
 
+import {toLonLat, fromLonLat} from 'ol/proj';
+
 
 
 @Component({
@@ -116,7 +118,7 @@ export class HomePage implements OnInit {
             var latitude = req.location;*/
 
             var iconFeature = new Feature({
-                geometry: new Point(this.randomGeo(313986.42, 5158087.34))
+                geometry: new Point(fromLonLat([req.location.geopoint.longitude,req.location.geopoint.latitude]))
             });
 
             let iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=P&size=50&hoffset=1&background=FACF1B";//groc
