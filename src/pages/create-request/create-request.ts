@@ -4,6 +4,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {LoginService} from "../../services/login.service";
 import {AngularFirestore, AngularFirestoreCollection} from "@angular/fire/firestore";
 import {Request} from "../../models/request";
+import Geolocation from 'ol/Geolocation';
 
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -52,10 +53,15 @@ export class CreateRequestPage implements OnInit{
         zoom: 14
       })
     });
+    this.markersLayer = new VectorLayer({
+      source: new VectorSource({
+          features: []
+      })
+    });
+    this.map.addLayer(this.markersLayer);
     this.map.on('click', (evt)=> {
-        if (this.markersLayer) this.markersLayer.getSource().clear(true);
+        this.markersLayer.getSource().clear(true);
         this.chosenCoordinates = evt.coordinate;
-        alert("You clicked near LON " + this.chosenCoordinates[0] + ", LAT: "+ this.chosenCoordinates[1] + " E");
         var iconFeature = new Feature({
             geometry: new Point(this.chosenCoordinates)
         });
@@ -67,12 +73,30 @@ export class CreateRequestPage implements OnInit{
         });
 
         iconFeature.setStyle(iconStyle);
-        this.markersLayer = new VectorLayer({
-          source: new VectorSource({
-              features: [iconFeature]
-          })
-        });
+        this.markersLayer.getSource().addFeatures([iconFeature]);
+        
     });
+    let firstTime = true;
+
+    var geolocation = new Geolocation({
+      // enableHighAccuracy must be set to true to have the heading value.
+      tracking:true,
+      trackingOptions: {
+        enableHighAccuracy: true,
+        maximumAge:2000
+      },
+      projection: this.map.getView().getProjection()
+    });
+
+    geolocation.on('change', ()=>{
+      
+        var pos = geolocation.getPosition();
+        if (firstTime){
+          firstTime = false;
+          this.center(pos[0],pos[1]);
+        }
+        this.addMarkerPosition('myPos', pos[0], pos[1], 'assets/imgs/myPos.svg');
+    })
 
     this.requestsCollection = this.afs.collection<Request>('/requests');
   }
@@ -95,6 +119,42 @@ export class CreateRequestPage implements OnInit{
 
   cancel(): void {
     this.viewCtrl.dismiss('canceled');
+  }
+
+  addMarkerPosition(name, lng, lat, img) {
+    let style = new Icon({
+        src: img,
+        scale: 1,
+        rotation: 0,
+        anchorXUnits: 'fraction',
+        anchorYUnits: 'fraction',
+        opacity: 1
+    })
+    var feature = new Feature({
+        geometry: new Point([lng, lat]),
+    })
+
+    feature.set('name', name)
+
+    feature.setStyle(new Style({
+        image: style
+    }))
+    var layer = new VectorLayer({
+        source: new VectorSource({
+            features: [feature]
+        })
+    })
+    layer.set('name', name)
+    layer.setZIndex(10)
+    this.map.addLayer(layer);
+}
+
+center(lon, lat) {
+    let feature = new Feature({
+        geometry: new Point([lon, lat]),
+    });
+    this.map.getView().fit(feature.getGeometry());
+    this.map.getView().setZoom(14);
   }
 
 }

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="43.345" height="40.348" viewBox="0 0 43.345 40.348">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#0479ff" stop-opacity="0"/>
+      <stop offset="0.331" stop-color="#0479ff" stop-opacity="0.055"/>
+      <stop offset="1" stop-color="#0479ff" stop-opacity="0.6"/>
+    </linearGradient>
+    <filter id="Elipse_45" x="9.263" y="9.371" width="24.74" height="24.74" filterUnits="userSpaceOnUse">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Grupo_49" data-name="Grupo 49" transform="translate(-361.737 -440.629)">
+    <g id="Elipse_46" data-name="Elipse 46" transform="translate(364 443)" fill="rgba(4,121,255,0.2)" stroke="rgba(4,121,255,0.24)" stroke-width="1">
+      <circle cx="18.988" cy="18.988" r="18.988" stroke="none"/>
+      <circle cx="18.988" cy="18.988" r="18.488" fill="none"/>
+    </g>
+    <path id="Trazado_26" data-name="Trazado 26" d="M-60.888,22.465h-8.25L-86.451-3.967l42.89.013Z" transform="matrix(1, -0.017, 0.017, 1, 448.244, 443.836)" fill="url(#linear-gradient)"/>
+    <g transform="matrix(1, 0, 0, 1, 361.74, 440.63)" filter="url(#Elipse_45)">
+      <g id="Elipse_45-2" data-name="Elipse 45" transform="translate(17.26 17.37)" fill="#0479ff" stroke="#fff" stroke-width="2">
+        <circle cx="4.37" cy="4.37" r="4.37" stroke="none"/>
+        <circle cx="4.37" cy="4.37" r="5.37" fill="none"/>
+      </g>
+    </g>
+  </g>
+</svg>

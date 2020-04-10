@@ -5,6 +5,8 @@ import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
+import Geolocation from 'ol/Geolocation';
+import * as ol from 'ol';
 import {defaults as defaultControls, OverviewMap} from 'ol/control';
 import {interaction as defaultInteractions} from 'ol/interaction';
 import VectorLayer from 'ol/layer/Vector';
@@ -28,6 +30,7 @@ export class HomePage implements OnInit {
 
   private map: Map;
   private markersLayer: VectorLayer;
+  private geolocationLayer: VectorLayer;
   private selectedRequest: any;
   protected requestCollection: AngularFirestoreCollection<Request>;
   protected requests: Observable<Request[]>;
@@ -36,7 +39,7 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit(): void {
-
+    let firstTime = true;
     this.map = new Map({
       target: 'map',
       layers: [
@@ -60,6 +63,49 @@ export class HomePage implements OnInit {
     });
     this.map.addLayer(this.markersLayer);
 
+    this.geolocationLayer = new VectorLayer({
+      source: new VectorSource({
+          features: []
+      })
+    })
+    this.geolocationLayer.set('name', name)
+    this.geolocationLayer.setZIndex(10)
+    this.map.addLayer(this.geolocationLayer);
+
+    var geolocation = new Geolocation({
+      // enableHighAccuracy must be set to true to have the heading value.
+      tracking:true,
+      trackingOptions: {
+        enableHighAccuracy: true,
+        maximumAge:2000
+      },
+      projection: this.map.getView().getProjection()
+    });
+
+    geolocation.on('change', ()=>{
+      
+        var pos = geolocation.getPosition();
+        if (firstTime){
+          firstTime = false;
+          this.center(pos[0],pos[1]);
+        }
+        this.addMarkerPosition('myPos', pos[0], pos[1], 'assets/imgs/myPos.svg');
+    })
+
+    /*let deviceOrientation = new ol.DeviceOrientation({
+      tracking: true
+    });
+    deviceOrientation.on('change', event => {
+        this.map.getLayers().getArray().forEach(element => {
+            if (element.get('name') === 'myPos') {
+                element.getSource().getFeatures()[0].getStyle().getImage().setRotation(-(deviceOrientation.getAlpha() + 1.5));
+                element.getSource().refresh();
+            }
+        });
+
+    });*/
+
+
 
     this.afs.collection('requests').valueChanges().subscribe((requests:Request[])=>{
         let features = [];
@@ -73,10 +119,18 @@ export class HomePage implements OnInit {
                 geometry: new Point(this.randomGeo(313986.42, 5158087.34))
             });
 
+            let iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=P&size=50&hoffset=1&background=FACF1B";//groc
+            if (req.status === "accepted"){
+              iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=A&size=50&hoffset=1&background=598BF7";//blau
+            }else if (req.status ===  "completed"){
+              iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=C&size=50&hoffset=1&background=0EE548";//verd
+            }
+
+
             var iconStyle = new Style({
                 image: new Icon(({
                     anchor: [0.5, 1],
-                    src: "http://cdn.mapmarker.io/api/v1/pin?text=P&size=50&hoffset=1"
+                    src: iconsrc
                 }))
             });
 
@@ -127,5 +181,36 @@ export class HomePage implements OnInit {
       else 
         return [ lon + Math.random()*1000 ,  lat + Math.random()*1000] 
   }
+
+  addMarkerPosition(name, lng, lat, img) {
+    this.geolocationLayer.getSource().clear(true);
+      let style = new Icon({
+          src: img,
+          scale: 1,
+          rotation: 0,
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'fraction',
+          opacity: 1
+      })
+      var feature = new Feature({
+          geometry: new Point([lng, lat]),
+      })
+
+      feature.set('name', name)
+
+      feature.setStyle(new Style({
+          image: style
+      }))
+
+      this.geolocationLayer.getSource().addFeatures( [feature]);
+  }
+
+  center(lon, lat) {
+      let feature = new Feature({
+          geometry: new Point([lon, lat]),
+      });
+      this.map.getView().fit(feature.getGeometry());
+      this.map.getView().setZoom(14);
+    }
 
 }

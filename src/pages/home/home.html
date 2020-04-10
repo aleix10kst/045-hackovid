@@ -20,9 +20,9 @@
     <h2>{{ selectedRequest.title }}</h2>
       <h3>Location</h3>
       <p>{{ selectedRequest.description}}</p>
-      <button ion-button secondary>
-          Acceptar Peticio
-      </button>
+      <button ion-button secondary *ngIf="selectedRequest.status === 'pending'">
+        Acceptar Peticio
+    </button>
   </div>
 
 
