@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ModalController, ToastController} from 'ionic-angular';
 import {CreateRequestPage} from "../create-request/create-request";
 import Map from 'ol/Map';
@@ -14,16 +14,12 @@ import {interaction as defaultInteractions} from 'ol/interaction';
 })
 export class HomePage implements OnInit {
 
-  private map:Map;
-  constructor(public navCtrl: NavController, private afAuth: AngularFireAuth) {
+  private map: Map;
 
   constructor(private modalCtrl: ModalController, private toastController: ToastController) {
   }
 
   ngOnInit(): void {
-    this.afAuth.auth.onAuthStateChanged((response: User) => {
-      console.log(response);
-    })
 
     this.map = new Map({
       target: 'map',
@@ -35,11 +31,11 @@ export class HomePage implements OnInit {
         })
       ],
       view: new View({
-        center: [ 313986.42 , 5158087.34 ],
+        center: [313986.42, 5158087.34],
         zoom: 14
       })
     });
-
+  }
 
 
   onClickAddRequest(): void {
