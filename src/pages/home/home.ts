@@ -156,22 +156,24 @@ export class HomePage implements OnInit {
       console.log(feature);
       if (feature && feature["request"]) {
         this.selectedRequest = feature["request"];
-        const alert = this.alertCtrl.create({
-          title: this.selectedRequest.title,
-          message: this.selectedRequest.description,
-          buttons: [
-            {
-              text: 'Cancel·la'
-            },
-            {
-              text: 'Accepta',
-              handler: () => {
-                this.requestCollection.doc(this.selectedRequest.description)
+        if (this.selectedRequest.status === 'pending') {
+          const alert = this.alertCtrl.create({
+            title: this.selectedRequest.title,
+            message: this.selectedRequest.description,
+            buttons: [
+              {
+                text: 'Cancel·la'
+              },
+              {
+                text: 'Accepta',
+                handler: () => {
+
+                }
               }
-            }
-          ]
-        });
-        alert.present();
+            ]
+          });
+          alert.present();
+        }
       }
       else this.selectedRequest = null;
     });

@@ -11,14 +11,14 @@
 
   <div id="map"></div>
 
-  <div *ngIf="selectedRequest" class="requestLabel">
+  <!--<div *ngIf="selectedRequest" class="requestLabel">
     <h2>{{ selectedRequest.title }}</h2>
       <h3>Location</h3>
       <p>{{ selectedRequest.description}}</p>
       <button ion-button secondary *ngIf="selectedRequest.status === 'pending'">
         Acceptar Peticio
     </button>
-  </div>
+  </div>-->
 
   <ion-fab right bottom *ngIf="canAddRequests">
     <button ion-fab color="primary" (click)="onClickAddRequest()"><ion-icon name="add" ></ion-icon></button>
