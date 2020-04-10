@@ -12,6 +12,7 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "target": "es5",
+    "baseUrl": "./",
     "paths": {
       "ol": ["node_modules/ol/src"],
       "ol/*": ["node_modules/ol/src/*"]

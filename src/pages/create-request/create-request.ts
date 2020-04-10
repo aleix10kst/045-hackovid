@@ -38,11 +38,11 @@ export class CreateRequestPage implements OnInit{
       createdBy: this.loginService.getCurrentUser().uid,
       status: "pending"
     };
-    this.requestsCollection.add(newRequest).then(() => this.viewCtrl.dismiss());
+    this.requestsCollection.add(newRequest).then(() => this.viewCtrl.dismiss('created'));
   }
 
   cancel(): void {
-    this.viewCtrl.dismiss();
+    this.viewCtrl.dismiss('canceled');
   }
 
 }
