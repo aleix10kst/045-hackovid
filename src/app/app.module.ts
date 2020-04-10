@@ -16,6 +16,8 @@ import {LoginPage} from "../pages/login/login";
 import {RegisterPage} from "../pages/register/register";
 import {AngularFireAuthModule} from "@angular/fire/auth";
 import {LoginService} from "../services/login.service";
+import {RequestsModule} from "../pages/requests/requests.module";
+import {CreateRequestPage} from "../pages/create-request/create-request";
 
 const firebaseConfig = {
 
@@ -28,15 +30,17 @@ const firebaseConfig = {
     ListPage,
     UserPage,
     RegisterPage,
-    LoginPage
+    LoginPage,
+    CreateRequestPage
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp),
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFirestoreModule,
     AngularFireAuthModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RequestsModule,
+    IonicModule.forRoot(MyApp),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -45,7 +49,8 @@ const firebaseConfig = {
     ListPage,
     UserPage,
     RegisterPage,
-    LoginPage
+    LoginPage,
+    CreateRequestPage
   ],
   providers: [
     StatusBar,
