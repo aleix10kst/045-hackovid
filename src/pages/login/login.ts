@@ -4,7 +4,6 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {HomePage} from "../home/home";
 import {RegisterPage} from "../register/register";
 import {AngularFireAuth} from "@angular/fire/auth";
-import UserCredential = firebase.auth.UserCredential;
 import firebase from "firebase";
 import {LoginService} from "../../services/login.service";
 

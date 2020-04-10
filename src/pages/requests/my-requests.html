@@ -1,0 +1,15 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Les meves peticions</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding-vertical>
+  <ion-tabs>
+    <ion-tab tabTitle="Creades" [root]="createdRequestsTab"></ion-tab>
+    <ion-tab tabTitle="Acceptades" [root]="acceptedRequestsTab"></ion-tab>
+  </ion-tabs>
+</ion-content>

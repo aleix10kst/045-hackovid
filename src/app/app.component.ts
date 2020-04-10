@@ -8,6 +8,7 @@ import { ListPage } from '../pages/list/list';
 import {UserPage} from "../pages/user/user";
 import {LoginPage} from "../pages/login/login";
 import {LoginService} from "../services/login.service";
+import {MyRequestsPage} from "../pages/requests/my-requests";
 
 @Component({
   templateUrl: 'app.html'
@@ -26,7 +27,8 @@ export class MyApp implements OnInit{
     this.pages = [
       { title: 'Home', component: HomePage },
       { title: 'List', component: ListPage },
-      { title: 'Usuari', component: UserPage}
+      { title: 'Les meves peticions', component: MyRequestsPage},
+      { title: 'Perfil', component: UserPage}
     ];
   }
 
