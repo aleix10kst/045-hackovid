@@ -32,10 +32,14 @@ export class LoginService {
   isLoggedIn(): Promise<User> {
     return new Promise<User>((resolve, reject) => {
       this.afAuth.authState.pipe(first()).toPromise().then((response: firebase.User) => {
-        this.afs.doc('users/' + response.uid).valueChanges().pipe(take(1)).subscribe((response) => {
-          this.user = response as User;
-          resolve(this.user);
-        });
+        if (!!response) {
+          this.afs.doc('users/' + response.uid).valueChanges().pipe(take(1)).subscribe((response) => {
+            this.user = response as User;
+            resolve(this.user);
+          });
+        } else {
+          resolve();
+        }
       }).catch((err) => reject(err));
     })
   }
