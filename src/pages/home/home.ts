@@ -18,9 +18,13 @@ import Feature from 'ol/Feature';
 import {AngularFirestore} from "@angular/fire/firestore";
 import {AngularFirestoreCollection} from "@angular/fire/firestore";
 import {Request} from "../../models/request";
-import {Observable} from "rxjs";
+import {Observable, BehaviorSubject} from "rxjs";
 
 import {toLonLat, fromLonLat} from 'ol/proj';
+
+import { switchMap, shareReplay } from 'rxjs/operators';
+import * as firebaseApp from 'firebase/app';
+import * as geofirex from 'geofirex';
 
 
 
@@ -120,6 +124,12 @@ export class HomePage implements OnInit {
             var iconFeature = new Feature({
                 geometry: new Point(fromLonLat([req.location.geopoint.longitude,req.location.geopoint.latitude]))
             });
+
+            var geo = geofirex.init(firebaseApp);
+            var point = geo.point(req.location.geopoint.longitude, req.location.geopoint.latitude);
+            var radius = 10;
+            var field = 'position';
+            var query = geo.query('requests').within(point, radius, field);
 
             let iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=P&size=50&hoffset=1&background=FACF1B";//groc
             if (req.status === "accepted"){
