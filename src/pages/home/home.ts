@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {AlertController, ModalController, ToastController} from 'ionic-angular';
+import {Alert, AlertController, ModalController, ToastController} from 'ionic-angular';
 import {CreateRequestPage} from "../create-request/create-request";
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -14,7 +14,6 @@ import Feature from 'ol/Feature';
 
 import {AngularFirestore, AngularFirestoreCollection} from "@angular/fire/firestore";
 import {Request} from "../../models/request";
-import {Observable, BehaviorSubject} from "rxjs";
 
 import {fromLonLat} from 'ol/proj';
 import {UserSevice} from "../../services/user.sevice";
@@ -29,8 +28,7 @@ import * as geofirex from 'geofirex';
 })
 export class HomePage implements OnInit {
 
-  protected requestCollection: AngularFirestoreCollection<Request>;
-  protected requests: Observable<Request[]>;
+  private requestCollection: AngularFirestoreCollection<Request>;
   private map: Map;
   private markersLayer: VectorLayer;
   private geolocationLayer: VectorLayer;
@@ -47,6 +45,7 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.requestCollection = this.afs.collection('requests');
     this.canAddRequests = this.userSevice.isSuperUser() || this.userSevice.isEntitatUser();
     let firstTime = true;
     this.map = new Map({
@@ -116,7 +115,7 @@ export class HomePage implements OnInit {
 
 
 
-    this.afs.collection('requests').valueChanges().subscribe((requests: Request[]) => {
+    this.requestCollection.valueChanges().subscribe((requests: Request[]) => {
       let features = [];
       for (var i in requests) {
         let req = requests[i];
@@ -165,23 +164,64 @@ export class HomePage implements OnInit {
       console.log(feature);
       if (feature && feature["request"]) {
         this.selectedRequest = feature["request"];
-        if (this.selectedRequest.status === 'pending') {
-          const alert = this.alertCtrl.create({
-            title: this.selectedRequest.title,
-            message: this.selectedRequest.description,
-            buttons: [
-              {
-                text: 'Cancel·la'
-              },
-              {
-                text: 'Accepta',
-                handler: () => {
-
+        let alert: Alert;
+        switch (this.selectedRequest.status) {
+          case 'pending':
+            alert = this.alertCtrl.create({
+              title: this.selectedRequest.title,
+              message: this.selectedRequest.description,
+              buttons: [
+                {
+                  text: 'Cancel·la'
+                },
+                {
+                  text: 'Accepta la petició',
+                  handler: () => {
+                    this.requestCollection.doc(this.selectedRequest.uuid).update({
+                      status: 'accepted',
+                      acceptedBy: this.userSevice.getCurrentUser().uid,
+                      acceptedAt: new Date().getTime()
+                    }).then(() => {
+                      const acceptedRequestToast = this.toastController.create({
+                        message: 'Has acceptat la petició.',
+                        duration: 3000
+                      });
+                      acceptedRequestToast.present();
+                    });
+                  }
                 }
-              }
-            ]
-          });
-          alert.present();
+              ]
+            });
+            alert.present();
+            break;
+          case 'accepted':
+            alert = this.alertCtrl.create({
+              title: this.selectedRequest.title,
+              message: this.selectedRequest.description,
+              buttons: [
+                {
+                  text: 'Tanca'
+                },
+                {
+                  text: 'Rebutja',
+                  handler: () => {
+                    this.requestCollection.doc(this.selectedRequest.uuid).update({
+                      status: 'pending',
+                      acceptedBy: null,
+                      acceptedAt: null
+                    }).then(() => {
+                      const canceledRequestToast = this.toastController.create({
+                        message: 'Has cancel·lat la petició',
+                        duration: 3000
+                      });
+                      canceledRequestToast.present();
+                    })
+                  }
+                }
+              ]
+            });
+            alert.present();
+            break;
         }
       }
       else this.selectedRequest = null;

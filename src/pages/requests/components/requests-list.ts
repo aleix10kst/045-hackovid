@@ -4,7 +4,8 @@ import {Observable} from "rxjs";
 
 export class RequestsList {
 
-  title: string;
+  protected title: string;
+  protected noResults: string;
   protected requestCollection: AngularFirestoreCollection<Request>;
   protected requests: Observable<Request[]>;
 
