@@ -27,8 +27,8 @@ export class MyApp implements OnInit{
     this.pages = [
       { title: 'Home', component: HomePage },
       { title: 'Les meves peticions', component: MyRequestsPage},
-      { title: 'Perfil', component: UserPage},
-      { title: 'Entitats de voluntariat', component: EntitatsPage}
+      { title: 'Entitats de voluntariat', component: EntitatsPage},
+      { title: 'Perfil', component: UserPage}
     ];
   }
 

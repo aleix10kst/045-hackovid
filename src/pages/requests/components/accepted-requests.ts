@@ -14,6 +14,7 @@ export class AcceptedRequestsTab extends RequestsList implements OnInit {
 
   ngOnInit(): void {
     this.title = 'Peticions acceptades';
+    this.noResults = 'Actualment no has acceptat cap petició';
     this.requestCollection = this.afs.collection('requests', ref => ref.where('acceptedBy', '==',this.userSevice.getCurrentUser().uid));
     this.requests = this.requestCollection.valueChanges();
   }
