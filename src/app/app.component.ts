@@ -4,7 +4,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { HomePage } from '../pages/home/home';
-import { ListPage } from '../pages/list/list';
+import { EntitatsPage } from '../pages/entitats/entitats';
 import {UserPage} from "../pages/user/user";
 import {LoginPage} from "../pages/login/login";
 import {LoginService} from "../services/login.service";
@@ -26,9 +26,9 @@ export class MyApp implements OnInit{
     // used for an example of ngFor and navigation
     this.pages = [
       { title: 'Home', component: HomePage },
-      { title: 'List', component: ListPage },
       { title: 'Les meves peticions', component: MyRequestsPage},
-      { title: 'Perfil', component: UserPage}
+      { title: 'Perfil', component: UserPage},
+      { title: 'Entitats de voluntariat', component: EntitatsPage}
     ];
   }
 
