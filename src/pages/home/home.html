@@ -23,4 +23,10 @@
   <ion-fab right bottom *ngIf="canAddRequests">
     <button ion-fab color="primary" (click)="onClickAddRequest()"><ion-icon name="add" ></ion-icon></button>
   </ion-fab>
+  <div class="slideContainer">
+    <ion-range [(ngModel)]="radius" (ionChange)="valueChanged($event)" min="5" max="100" color="secondary">
+      <ion-label slot="start">5</ion-label>
+      <ion-label slot="end">100</ion-label>
+    </ion-range>
+  </div>
 </ion-content>

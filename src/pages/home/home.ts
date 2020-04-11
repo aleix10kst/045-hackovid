@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {Alert, AlertController, ModalController, ToastController} from 'ionic-angular';
 import {CreateRequestPage} from "../create-request/create-request";
 import Map from 'ol/Map';
@@ -15,7 +15,7 @@ import Feature from 'ol/Feature';
 import {AngularFirestore, AngularFirestoreCollection} from "@angular/fire/firestore";
 import {Request} from "../../models/request";
 
-import {fromLonLat} from 'ol/proj';
+import {toLonLat, fromLonLat} from 'ol/proj';
 import {UserSevice} from "../../services/user.sevice";
 import * as firebaseApp from 'firebase/app';
 import * as geofirex from 'geofirex';
@@ -26,13 +26,16 @@ import * as geofirex from 'geofirex';
   selector: 'page-home',
   templateUrl: 'home.html'
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, AfterViewInit {
 
   private requestCollection: AngularFirestoreCollection<Request>;
   private map: Map;
   private markersLayer: VectorLayer;
   private geolocationLayer: VectorLayer;
   private selectedRequest: Request;
+  private geo: any;
+  protected radius: number;
+  private currentPoint: any;
 
   canAddRequests: boolean;
 
@@ -42,6 +45,11 @@ export class HomePage implements OnInit {
     private alertCtrl: AlertController,
     private userSevice: UserSevice,
     private afs: AngularFirestore) {
+      this.geo = geofirex.init(firebaseApp);
+  }
+
+  ngAfterViewInit():void{
+    this.radius = 10;
   }
 
   ngOnInit(): void {
@@ -85,7 +93,7 @@ export class HomePage implements OnInit {
       tracking:true,
       trackingOptions: {
         enableHighAccuracy: true,
-        maximumAge:2000
+        maximumAge:20
       },
       projection: this.map.getView().getProjection()
     });
@@ -98,6 +106,11 @@ export class HomePage implements OnInit {
           this.center(pos[0],pos[1]);
         }
         this.addMarkerPosition('myPos', pos[0], pos[1], 'assets/imgs/myPos.svg');
+        let coordsConverted = toLonLat([pos[0], pos[1]]);
+        this.currentPoint = this.geo.point(coordsConverted[0],coordsConverted[1]);
+        this.paintMap();
+
+
     })
 
     /*let deviceOrientation = new ol.DeviceOrientation({
@@ -112,49 +125,6 @@ export class HomePage implements OnInit {
         });
 
     });*/
-
-
-
-    this.requestCollection.valueChanges().subscribe((requests: Request[]) => {
-      let features = [];
-      for (var i in requests) {
-        let req = requests[i];
-        console.log(req);
-        /*var longitude = req.location;
-        var latitude = req.location;*/
-
-        var iconFeature = new Feature({
-          geometry: new Point(fromLonLat([req.location.geopoint.longitude,req.location.geopoint.latitude]))
-            });
-
-            var geo = geofirex.init(firebaseApp);
-            var point = geo.point(req.location.geopoint.longitude, req.location.geopoint.latitude);
-            var radius = 10;
-            var field = 'position';
-            var query = geo.query('requests').within(point, radius, field);
-
-            let iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=P&size=50&hoffset=1&background=FACF1B";//groc
-            if (req.status === "accepted"){
-              iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=A&size=50&hoffset=1&background=598BF7";//blau
-            }else if (req.status ===  "completed"){
-              iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=C&size=50&hoffset=1&background=0EE548";//verd
-            }
-
-
-        var iconStyle = new Style({
-          image: new Icon(({
-            anchor: [0.5, 1],
-            src: iconsrc
-          }))
-        });
-
-        iconFeature.setStyle(iconStyle);
-        iconFeature["request"] = req;
-        features.push(iconFeature);
-      }
-      this.markersLayer.getSource().clear(true);
-      this.markersLayer.getSource().addFeatures(features);
-    });
 
 
     this.map.on('click', (evt) => {
@@ -286,6 +256,52 @@ export class HomePage implements OnInit {
       });
       this.map.getView().fit(feature.getGeometry());
       this.map.getView().setZoom(14);
+    }
+
+    valueChanged($event){
+      //this.radius = $event.value;
+      this.paintMap();
+    }
+
+
+    paintMap(){
+      let point = this.currentPoint;
+      if (!point){
+        let coordsConverted = toLonLat([313986.42, 5158087.34]);
+        this.currentPoint = this.geo.point(coordsConverted[0],coordsConverted[1]);
+        point = this.currentPoint;
+      }
+      this.geo.query('requests').within(point, this.radius, 'location').subscribe((requests: Request[]) => {
+        let features = [];
+        for (var i in requests) {
+              let req = requests[i];
+  
+              var iconFeature = new Feature({
+                geometry: new Point(fromLonLat([req.location.geopoint.longitude,req.location.geopoint.latitude]))
+              });
+  
+              let iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=P&size=50&hoffset=1&background=FACF1B";//groc
+              if (req.status === "accepted"){
+                iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=A&size=50&hoffset=1&background=598BF7";//blau
+              }else if (req.status ===  "completed"){
+                iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=C&size=50&hoffset=1&background=0EE548";//verd
+              }
+  
+  
+              var iconStyle = new Style({
+                image: new Icon(({
+                  anchor: [0.5, 1],
+                  src: iconsrc
+                }))
+              });
+      
+              iconFeature.setStyle(iconStyle);
+              iconFeature["request"] = req;
+              features.push(iconFeature);
+        }
+        this.markersLayer.getSource().clear(true);
+        this.markersLayer.getSource().addFeatures(features);
+    });;
     }
 
 }

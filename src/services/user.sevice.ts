@@ -33,11 +33,11 @@ export class UserSevice {
   }
 
   isEntitatUser(): boolean {
-    return this.user.roles.indexOf('entitat') >= 0;
+    return this.user && this.user.roles && this.user.roles.indexOf('entitat') >= 0;
   }
 
   isSuperUser(): boolean {
-    return this.user.roles.indexOf('superuser') >= 0;
+    return this.user && this.user.roles && this.user.roles.indexOf('superuser') >= 0;
   }
 
 }
