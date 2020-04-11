@@ -48,9 +48,8 @@ export class LoginService {
       this.afAuth.auth.createUserWithEmailAndPassword(email, password).then((response: UserCredential) => {
         const user: User = {email: response.user.email, name: response.user.displayName, uid: response.user.uid, roles: ['normal']};
         if (codiEntitat) {
-          this.afs.collection('entitats').doc(codiEntitat).valueChanges().pipe(first()).subscribe((doc) => {
-            debugger;
-            if (!!doc) {
+          this.afs.collection('entitats', ref => ref.where('codiEntitat', '==', codiEntitat)).valueChanges().pipe(first()).subscribe((doc) => {
+            if (!!doc && doc.length > 0) {
               user.roles.push('entitat');
             }
             this.userService.createNewUser(response.user.uid, user).then(() => {

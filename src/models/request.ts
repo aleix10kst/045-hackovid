@@ -12,6 +12,9 @@ export interface Request {
   createdAt: Date;
   createdBy: string;
 
+  // Edited metadata
+  editedAt: Date;
+
   // Accepted metadata
   acceptedAt: Date;
   acceptedBy: string;

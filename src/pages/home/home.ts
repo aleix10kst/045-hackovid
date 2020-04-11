@@ -61,12 +61,12 @@ export class HomePage implements OnInit, AfterViewInit {
         'API_KEY_FOR_BROWSER_RELEASE': 'XXXXXXXXXXXXXXXXXXXXXXXX',
         'API_KEY_FOR_BROWSER_DEBUG': 'XXXXXXXXXXXXXXXXXXXXXXXXX'
       });
-  
-  
+
+
       let firstTime = true;
       this.requestCollection = this.afs.collection('requests');
       this.canAddRequests = this.userSevice.isSuperUser() || this.userSevice.isEntitatUser();
-  
+
       let mapOptions: GoogleMapOptions = {
         camera: {
            target: {
@@ -77,15 +77,15 @@ export class HomePage implements OnInit, AfterViewInit {
            tilt: 30
          }
       };
-     
+
       this.map = GoogleMaps.create('map', mapOptions);
-  
+
       let icon = {} as MarkerIcon;
       icon["size"] = {};
       icon["url"] = 'assets/imgs/myPos.svg';
       icon["size"]["width"] = 40;
       icon["size"]["height"] = 40;
-  
+
       this.markerPosition = this.map.addMarkerSync({
           icon: icon,
           position: {
@@ -93,7 +93,7 @@ export class HomePage implements OnInit, AfterViewInit {
             lng: 2
           }
       });
-  
+
       Geolocation.watchPosition({}, (position, err) => {
           if (firstTime){
             firstTime = false;
@@ -223,7 +223,18 @@ export class HomePage implements OnInit, AfterViewInit {
                         message: this.selectedRequest.description,
                         buttons: [
                           {
-                            text: 'Tanca'
+                            text: 'Completa',
+                            handler: () => {
+                              this.requestCollection.doc(this.selectedRequest.uuid).update({
+                                status: 'completed',
+                              }).then(() => {
+                                const completedRequestToast = this.toastController.create({
+                                  message: 'Has completat la petició',
+                                  duration: 3000
+                                });
+                                completedRequestToast.present();
+                              })
+                            }
                           },
                           {
                             text: 'Rebutja',
@@ -240,6 +251,9 @@ export class HomePage implements OnInit, AfterViewInit {
                                 canceledRequestToast.present();
                               })
                             }
+                          },
+                          {
+                            text: 'Tanca'
                           }
                         ]
                       });
