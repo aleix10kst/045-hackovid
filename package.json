@@ -6,6 +6,8 @@
   "private": true,
   "scripts": {
     "start": "ionic-app-scripts serve",
+    "start-cordova": "ionic cordova run browser -l",
+    "build-cordova": "ionic cordova build browser -l",
     "clean": "ionic-app-scripts clean",
     "build": "ionic-app-scripts build",
     "lint": "ionic-app-scripts lint"
