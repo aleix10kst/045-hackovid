@@ -1,24 +1,24 @@
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {Alert, AlertController, ModalController, ToastController} from 'ionic-angular';
 import {CreateRequestPage} from "../create-request/create-request";
-import Map from 'ol/Map';
-import View from 'ol/View';
-import TileLayer from 'ol/layer/Tile';
-import XYZ from 'ol/source/XYZ';
-import Geolocation from 'ol/Geolocation';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import {Icon, Style} from 'ol/style';
-import Point from 'ol/geom/Point';
-import Feature from 'ol/Feature';
-
 import {AngularFirestore, AngularFirestoreCollection} from "@angular/fire/firestore";
 import {Request} from "../../models/request";
-
-import {toLonLat, fromLonLat} from 'ol/proj';
 import {UserSevice} from "../../services/user.sevice";
 import * as firebaseApp from 'firebase/app';
+import { Platform } from 'ionic-angular';
 import * as geofirex from 'geofirex';
+import {
+  GoogleMaps,
+  GoogleMap,
+  GoogleMapsEvent,
+  GoogleMapOptions,
+  Marker,
+  Environment,
+  ILatLng,
+  MarkerIcon
+} from '@ionic-native/google-maps';
+import { Plugins } from '@capacitor/core';
+const { Geolocation } = Plugins;
 
 
 
@@ -29,13 +29,14 @@ import * as geofirex from 'geofirex';
 export class HomePage implements OnInit, AfterViewInit {
 
   private requestCollection: AngularFirestoreCollection<Request>;
-  private map: Map;
-  private markersLayer: VectorLayer;
-  private geolocationLayer: VectorLayer;
   private selectedRequest: Request;
   private geo: any;
+  private map: GoogleMap;
   protected radius: number;
   private currentPoint: any;
+  private markers:Marker[];
+
+  private markerPosition: Marker;
 
   canAddRequests: boolean;
 
@@ -44,171 +45,64 @@ export class HomePage implements OnInit, AfterViewInit {
     private toastController: ToastController,
     private alertCtrl: AlertController,
     private userSevice: UserSevice,
+    private platform: Platform,
     private afs: AngularFirestore) {
       this.geo = geofirex.init(firebaseApp);
   }
 
   ngAfterViewInit():void{
     this.radius = 10;
+    this.markers = [];
   }
 
   ngOnInit(): void {
-    this.requestCollection = this.afs.collection('requests');
-    this.canAddRequests = this.userSevice.isSuperUser() || this.userSevice.isEntitatUser();
-    let firstTime = true;
-    this.map = new Map({
-      target: 'map',
-      layers: [
-        new TileLayer({
-          source: new XYZ({
-            url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-          })
-        })
-      ],
-      view: new View({
-        center: [313986.42, 5158087.34],
-        zoom: 14
-      })
-    });
-
-
-    this.markersLayer = new VectorLayer({
-      source: new VectorSource({
-        features: []
-      })
-    });
-    this.map.addLayer(this.markersLayer);
-
-    this.geolocationLayer = new VectorLayer({
-      source: new VectorSource({
-          features: []
-      })
-    })
-    this.geolocationLayer.set('name', name)
-    this.geolocationLayer.setZIndex(10)
-    this.map.addLayer(this.geolocationLayer);
-
-    var geolocation = new Geolocation({
-      // enableHighAccuracy must be set to true to have the heading value.
-      tracking:true,
-      trackingOptions: {
-        enableHighAccuracy: true,
-        maximumAge:20
-      },
-      projection: this.map.getView().getProjection()
-    });
-
-    geolocation.on('change', ()=>{
-
-        var pos = geolocation.getPosition();
-        if (firstTime){
-          firstTime = false;
-          this.center(pos[0],pos[1]);
-        }
-        this.addMarkerPosition('myPos', pos[0], pos[1], 'assets/imgs/myPos.svg');
-        let coordsConverted = toLonLat([pos[0], pos[1]]);
-        this.currentPoint = this.geo.point(coordsConverted[0],coordsConverted[1]);
-        this.paintMap();
-
-
-    })
-
-    /*let deviceOrientation = new ol.DeviceOrientation({
-      tracking: true
-    });
-    deviceOrientation.on('change', event => {
-        this.map.getLayers().getArray().forEach(element => {
-            if (element.get('name') === 'myPos') {
-                element.getSource().getFeatures()[0].getStyle().getImage().setRotation(-(deviceOrientation.getAlpha() + 1.5));
-                element.getSource().refresh();
-            }
-        });
-
-    });*/
-
-
-    this.map.on('click', (evt) => {
-      var feature = this.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-        return feature;
+    this.platform.ready().then(()=>{
+      Environment.setEnv({
+        'API_KEY_FOR_BROWSER_RELEASE': 'XXXXXXXXXXXXXXXXXXXXXXXX',
+        'API_KEY_FOR_BROWSER_DEBUG': 'XXXXXXXXXXXXXXXXXXXXXXXXX'
       });
-      console.log(feature);
-      if (feature && feature["request"]) {
-        this.selectedRequest = feature["request"];
-        let alert: Alert;
-        switch (this.selectedRequest.status) {
-          case 'pending':
-            alert = this.alertCtrl.create({
-              title: this.selectedRequest.title,
-              message: this.selectedRequest.description,
-              buttons: [
-                {
-                  text: 'Cancel·la'
-                },
-                {
-                  text: 'Accepta la petició',
-                  handler: () => {
-                    this.requestCollection.doc(this.selectedRequest.uuid).update({
-                      status: 'accepted',
-                      acceptedBy: this.userSevice.getCurrentUser().uid,
-                      acceptedAt: new Date().getTime()
-                    }).then(() => {
-                      const acceptedRequestToast = this.toastController.create({
-                        message: 'Has acceptat la petició.',
-                        duration: 3000
-                      });
-                      acceptedRequestToast.present();
-                    });
-                  }
-                }
-              ]
-            });
-            alert.present();
-            break;
-          case 'accepted':
-            alert = this.alertCtrl.create({
-              title: this.selectedRequest.title,
-              message: this.selectedRequest.description,
-              buttons: [
-                {
-                  text: 'Completa',
-                  handler: () => {
-                    this.requestCollection.doc(this.selectedRequest.uuid).update({
-                      status: 'completed',
-                    }).then(() => {
-                      const completedRequestToast = this.toastController.create({
-                        message: 'Has completat la petició',
-                        duration: 3000
-                      });
-                      completedRequestToast.present();
-                    })
-                  }
-                },
-                {
-                  text: 'Rebutja',
-                  handler: () => {
-                    this.requestCollection.doc(this.selectedRequest.uuid).update({
-                      status: 'pending',
-                      acceptedBy: null,
-                      acceptedAt: null
-                    }).then(() => {
-                      const canceledRequestToast = this.toastController.create({
-                        message: 'Has cancel·lat la petició',
-                        duration: 3000
-                      });
-                      canceledRequestToast.present();
-                    })
-                  }
-                },
-                {
-                  text: 'Tanca'
-                }
-              ]
-            });
-            alert.present();
-            break;
-        }
-      }
-      else this.selectedRequest = null;
+
+
+      let firstTime = true;
+      this.requestCollection = this.afs.collection('requests');
+      this.canAddRequests = this.userSevice.isSuperUser() || this.userSevice.isEntitatUser();
+
+      let mapOptions: GoogleMapOptions = {
+        camera: {
+           target: {
+             lat: 43.0741904,
+             lng: 2
+           },
+           zoom: 18,
+           tilt: 30
+         }
+      };
+
+      this.map = GoogleMaps.create('map', mapOptions);
+
+      let icon = {} as MarkerIcon;
+      icon["size"] = {};
+      icon["url"] = 'assets/imgs/myPos.svg';
+      icon["size"]["width"] = 40;
+      icon["size"]["height"] = 40;
+
+      this.markerPosition = this.map.addMarkerSync({
+          icon: icon,
+          position: {
+            lat: 43.0741904,
+            lng: 2
+          }
+      });
+
+      Geolocation.watchPosition({}, (position, err) => {
+          if (firstTime){
+            firstTime = false;
+            this.center(position.coords.longitude,position.coords.latitude);
+          }
+          this.updateMarkerPosition(position.coords.longitude,position.coords.latitude);
+          this.currentPoint = this.geo.point(position.coords.longitude,position.coords.latitude);
+          this.paintMap();
+      });
     });
   }
 
@@ -241,39 +135,21 @@ export class HomePage implements OnInit, AfterViewInit {
       return [lon + Math.random() * 1000, lat + Math.random() * 1000]
   }
 
-  addMarkerPosition(name, lng, lat, img) {
-    this.geolocationLayer.getSource().clear(true);
-      let style = new Icon({
-          src: img,
-          scale: 1,
-          rotation: 0,
-          anchorXUnits: 'fraction',
-          anchorYUnits: 'fraction',
-          opacity: 1
-      })
-      var feature = new Feature({
-          geometry: new Point([lng, lat]),
-      })
-
-      feature.set('name', name)
-
-      feature.setStyle(new Style({
-          image: style
-      }))
-
-      this.geolocationLayer.getSource().addFeatures( [feature]);
+  updateMarkerPosition(lng, lat) {
+    let ltlng = {} as ILatLng;
+    ltlng["lat"] = lat;
+    ltlng["lng"] = lng;
+    this.markerPosition.setPosition(ltlng);
   }
 
-  center(lon, lat) {
-      let feature = new Feature({
-          geometry: new Point([lon, lat]),
-      });
-      this.map.getView().fit(feature.getGeometry());
-      this.map.getView().setZoom(14);
-    }
+  center(lng, lat) {
+    let ltlng = {} as ILatLng;
+    ltlng["lat"] = lat;
+    ltlng["lng"] = lng;
+    this.map.setCameraTarget(ltlng);
+  }
 
     valueChanged($event){
-      //this.radius = $event.value;
       this.paintMap();
     }
 
@@ -281,41 +157,134 @@ export class HomePage implements OnInit, AfterViewInit {
     paintMap(){
       let point = this.currentPoint;
       if (!point){
-        let coordsConverted = toLonLat([313986.42, 5158087.34]);
+        let coordsConverted = [2, 41];
         this.currentPoint = this.geo.point(coordsConverted[0],coordsConverted[1]);
         point = this.currentPoint;
       }
       this.geo.query('requests').within(point, this.radius, 'location').subscribe((requests: Request[]) => {
-        let features = [];
-        for (var i in requests) {
-              let req = requests[i];
-  
-              var iconFeature = new Feature({
-                geometry: new Point(fromLonLat([req.location.geopoint.longitude,req.location.geopoint.latitude]))
-              });
-  
-              let iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=P&size=50&hoffset=1&background=FACF1B";//groc
-              if (req.status === "accepted"){
-                iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=A&size=50&hoffset=1&background=598BF7";//blau
-              }else if (req.status ===  "completed"){
-                iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=C&size=50&hoffset=1&background=0EE548";//verd
-              }
-  
-  
-              var iconStyle = new Style({
-                image: new Icon(({
-                  anchor: [0.5, 1],
-                  src: iconsrc
-                }))
-              });
-      
-              iconFeature.setStyle(iconStyle);
-              iconFeature["request"] = req;
-              features.push(iconFeature);
-        }
-        this.markersLayer.getSource().clear(true);
-        this.markersLayer.getSource().addFeatures(features);
-    });;
+          for (var i in requests) {
+                let req = requests[i];
+                let iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=P&size=50&hoffset=1&background=FACF1B";//groc
+                if (req.status === "accepted"){
+                  iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=A&size=50&hoffset=1&background=598BF7";//blau
+                }else if (req.status ===  "completed"){
+                  iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=C&size=50&hoffset=1&background=0EE548";//verd
+                }
+                let icon = {} as MarkerIcon;
+                icon["url"] = iconsrc;
+                icon["size"] = {};
+                icon["size"]["width"] = 40;
+                icon["size"]["height"] = 40;
+
+                let marker = this.map.addMarkerSync({
+                  icon: icon,
+                  animation: 'DROP',
+                  position: {
+                    lat: req.location.geopoint.latitude,
+                    lng: req.location.geopoint.longitude
+                  }
+                });
+                marker["request"]=req;
+                marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe((marker)=>{
+                  this.selectedRequest = marker["request"];
+                  let alert: Alert;
+                  switch (this.selectedRequest.status) {
+                    case 'pending':
+                      alert = this.alertCtrl.create({
+                        title: this.selectedRequest.title,
+                        message: this.selectedRequest.description,
+                        buttons: [
+                          {
+                            text: 'Cancel·la'
+                          },
+                          {
+                            text: 'Accepta la petició',
+                            handler: () => {
+                              this.requestCollection.doc(this.selectedRequest.uuid).update({
+                                status: 'accepted',
+                                acceptedBy: this.userSevice.getCurrentUser().uid,
+                                acceptedAt: new Date().getTime()
+                              }).then(() => {
+                                const acceptedRequestToast = this.toastController.create({
+                                  message: 'Has acceptat la petició.',
+                                  duration: 3000
+                                });
+                                acceptedRequestToast.present();
+                              });
+                            }
+                          }
+                        ]
+                      });
+                      alert.present();
+                      break;
+                    case 'accepted':
+                      alert = this.alertCtrl.create({
+                        title: this.selectedRequest.title,
+                        message: this.selectedRequest.description,
+                        buttons: [
+                          {
+                            text: 'Completa',
+                            handler: () => {
+                              this.requestCollection.doc(this.selectedRequest.uuid).update({
+                                status: 'completed',
+                              }).then(() => {
+                                const completedRequestToast = this.toastController.create({
+                                  message: 'Has completat la petició',
+                                  duration: 3000
+                                });
+                                completedRequestToast.present();
+                              })
+                            }
+                          },
+                          {
+                            text: 'Rebutja',
+                            handler: () => {
+                              this.requestCollection.doc(this.selectedRequest.uuid).update({
+                                status: 'pending',
+                                acceptedBy: null,
+                                acceptedAt: null
+                              }).then(() => {
+                                const canceledRequestToast = this.toastController.create({
+                                  message: 'Has cancel·lat la petició',
+                                  duration: 3000
+                                });
+                                canceledRequestToast.present();
+                              })
+                            }
+                          },
+                          {
+                            text: 'Tanca'
+                          }
+                        ]
+                      });
+                      alert.present();
+                      break;
+                  }
+                })
+                this.markers.push(marker);
+            }
+        });
     }
+
+
+
+    // Sets the map on all markers in the array.
+    setMapOnAll(map) {
+      for (var i = 0; i < this.markers.length; i++) {
+        this.markers[i].remove();
+      }
+    }
+
+    // Removes the markers from the map, but keeps them in the array.
+    clearMarkers() {
+      this.setMapOnAll(null);
+    }
+
+    // Deletes all markers in the array by removing references to them.
+    deleteMarkers() {
+      this.clearMarkers();
+      this.markers = [];
+    }
+
 
 }
