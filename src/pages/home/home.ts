@@ -1,28 +1,23 @@
 import {Component, OnInit} from '@angular/core';
-import {ModalController, ToastController} from 'ionic-angular';
+import {AlertController, ModalController, ToastController} from 'ionic-angular';
 import {CreateRequestPage} from "../create-request/create-request";
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
 import Geolocation from 'ol/Geolocation';
-import * as ol from 'ol';
-import {defaults as defaultControls, OverviewMap} from 'ol/control';
-import {interaction as defaultInteractions} from 'ol/interaction';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import {Circle as CircleStyle, Fill, Stroke, Style, Text, Icon} from 'ol/style';
+import {Icon, Style} from 'ol/style';
 import Point from 'ol/geom/Point';
 import Feature from 'ol/Feature';
 
-import {AngularFirestore} from "@angular/fire/firestore";
-import {AngularFirestoreCollection} from "@angular/fire/firestore";
+import {AngularFirestore, AngularFirestoreCollection} from "@angular/fire/firestore";
 import {Request} from "../../models/request";
 import {Observable, BehaviorSubject} from "rxjs";
 
-import {toLonLat, fromLonLat} from 'ol/proj';
-
-import { switchMap, shareReplay } from 'rxjs/operators';
+import {fromLonLat} from 'ol/proj';
+import {UserSevice} from "../../services/user.sevice";
 import * as firebaseApp from 'firebase/app';
 import * as geofirex from 'geofirex';
 
@@ -34,17 +29,25 @@ import * as geofirex from 'geofirex';
 })
 export class HomePage implements OnInit {
 
+  protected requestCollection: AngularFirestoreCollection<Request>;
+  protected requests: Observable<Request[]>;
   private map: Map;
   private markersLayer: VectorLayer;
   private geolocationLayer: VectorLayer;
-  private selectedRequest: any;
-  protected requestCollection: AngularFirestoreCollection<Request>;
-  protected requests: Observable<Request[]>;
+  private selectedRequest: Request;
 
-  constructor(private modalCtrl: ModalController, private toastController: ToastController, private afs: AngularFirestore) {
+  canAddRequests: boolean;
+
+  constructor(
+    private modalCtrl: ModalController,
+    private toastController: ToastController,
+    private alertCtrl: AlertController,
+    private userSevice: UserSevice,
+    private afs: AngularFirestore) {
   }
 
   ngOnInit(): void {
+    this.canAddRequests = this.userSevice.isSuperUser() || this.userSevice.isEntitatUser();
     let firstTime = true;
     this.map = new Map({
       target: 'map',
@@ -63,9 +66,9 @@ export class HomePage implements OnInit {
 
 
     this.markersLayer = new VectorLayer({
-        source: new VectorSource({
-            features: []
-        })
+      source: new VectorSource({
+        features: []
+      })
     });
     this.map.addLayer(this.markersLayer);
 
@@ -89,7 +92,7 @@ export class HomePage implements OnInit {
     });
 
     geolocation.on('change', ()=>{
-      
+
         var pos = geolocation.getPosition();
         if (firstTime){
           firstTime = false;
@@ -113,16 +116,16 @@ export class HomePage implements OnInit {
 
 
 
-    this.afs.collection('requests').valueChanges().subscribe((requests:Request[])=>{
-        let features = [];
-        for (var i in requests){
-            let req = requests[i];
-            console.log(req)
-            /*var longitude = req.location;
-            var latitude = req.location;*/
+    this.afs.collection('requests').valueChanges().subscribe((requests: Request[]) => {
+      let features = [];
+      for (var i in requests) {
+        let req = requests[i];
+        console.log(req);
+        /*var longitude = req.location;
+        var latitude = req.location;*/
 
-            var iconFeature = new Feature({
-                geometry: new Point(fromLonLat([req.location.geopoint.longitude,req.location.geopoint.latitude]))
+        var iconFeature = new Feature({
+          geometry: new Point(fromLonLat([req.location.geopoint.longitude,req.location.geopoint.latitude]))
             });
 
             var geo = geofirex.init(firebaseApp);
@@ -139,29 +142,49 @@ export class HomePage implements OnInit {
             }
 
 
-            var iconStyle = new Style({
-                image: new Icon(({
-                    anchor: [0.5, 1],
-                    src: iconsrc
-                }))
-            });
+        var iconStyle = new Style({
+          image: new Icon(({
+            anchor: [0.5, 1],
+            src: iconsrc
+          }))
+        });
 
-            iconFeature.setStyle(iconStyle);
-            iconFeature["request"] = req;
-            features.push(iconFeature);
-        }
-        this.markersLayer.getSource().clear(true);
-        this.markersLayer.getSource().addFeatures(features);
+        iconFeature.setStyle(iconStyle);
+        iconFeature["request"] = req;
+        features.push(iconFeature);
+      }
+      this.markersLayer.getSource().clear(true);
+      this.markersLayer.getSource().addFeatures(features);
     });
 
-    
-    this.map.on('click', (evt)=> {
-        var feature = this.map.forEachFeatureAtPixel(evt.pixel, function(feature) {
-          return feature;
-        });
-        console.log(feature);
-        if (feature && feature["request"]) this.selectedRequest = feature["request"];
-        else this.selectedRequest = null;
+
+    this.map.on('click', (evt) => {
+      var feature = this.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+        return feature;
+      });
+      console.log(feature);
+      if (feature && feature["request"]) {
+        this.selectedRequest = feature["request"];
+        if (this.selectedRequest.status === 'pending') {
+          const alert = this.alertCtrl.create({
+            title: this.selectedRequest.title,
+            message: this.selectedRequest.description,
+            buttons: [
+              {
+                text: 'Cancel·la'
+              },
+              {
+                text: 'Accepta',
+                handler: () => {
+
+                }
+              }
+            ]
+          });
+          alert.present();
+        }
+      }
+      else this.selectedRequest = null;
     });
   }
 
@@ -186,12 +209,12 @@ export class HomePage implements OnInit {
   }
 
   randomGeo(lon, lat) {
-      var u = Math.random();
+    var u = Math.random();
 
-      if (u < 0.5)
-        return [ lon - Math.random()*1000 ,  lat - Math.random()*1000] 
-      else 
-        return [ lon + Math.random()*1000 ,  lat + Math.random()*1000] 
+    if (u < 0.5)
+      return [lon - Math.random() * 1000, lat - Math.random() * 1000];
+    else
+      return [lon + Math.random() * 1000, lat + Math.random() * 1000]
   }
 
   addMarkerPosition(name, lng, lat, img) {

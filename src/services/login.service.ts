@@ -2,43 +2,38 @@ import {Injectable} from "@angular/core";
 import {AngularFireAuth} from "@angular/fire/auth";
 import {AngularFirestore} from "@angular/fire/firestore";
 import firebase from "firebase";
-import {first, take} from "rxjs/operators";
-import {User} from "../pages/user/user";
+import {first} from "rxjs/operators";
+import UserCredential = firebase.auth.UserCredential;
+import {User} from "../models/user";
+import {UserSevice} from "./user.sevice";
 
 @Injectable()
 export class LoginService {
 
-  private user: User;
-
-  constructor(private afAuth: AngularFireAuth, private afs: AngularFirestore) {}
+  constructor(private afAuth: AngularFireAuth, private afs: AngularFirestore, private userService: UserSevice) {
+  }
 
   loginWithEmail(email: string, password: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.afAuth.auth.signInWithEmailAndPassword(email, password).then((response: firebase.auth.UserCredential) => {
-        this.afs.doc('users/' + response.user.uid).valueChanges().pipe(take(1)).subscribe((response) => {
-          this.user = response as User;
+        this.userService.getUser(response.user.uid).then(() => {
           resolve();
-        });
+        })
       }).catch((err) => {
         reject(err);
       });
     })
   }
 
-  getCurrentUser(): User {
-    return this.user;
-  }
-
   isLoggedIn(): Promise<User> {
     return new Promise<User>((resolve, reject) => {
       this.afAuth.authState.pipe(first()).toPromise().then((response: firebase.User) => {
         if (!!response) {
-          this.afs.doc('users/' + response.uid).valueChanges().pipe(take(1)).subscribe((response) => {
-            this.user = response as User;
-            resolve(this.user);
-          });
+          this.userService.getUser(response.uid).then(() => {
+            resolve();
+          })
         } else {
-          resolve();
+          reject();
         }
       }).catch((err) => reject(err));
     })
@@ -47,4 +42,34 @@ export class LoginService {
   logout(): Promise<void> {
     return this.afAuth.auth.signOut();
   }
+
+  createWithUserEmail(email: string, password: string, codiEntitat: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.afAuth.auth.createUserWithEmailAndPassword(email, password).then((response: UserCredential) => {
+        const user: User = {email: response.user.email, name: response.user.displayName, uid: response.user.uid, roles: ['normal']};
+        if (codiEntitat) {
+          this.afs.collection('entitats').doc(codiEntitat).valueChanges().pipe(first()).subscribe((doc) => {
+            debugger;
+            if (!!doc) {
+              user.roles.push('entitat');
+            }
+            this.userService.createNewUser(response.user.uid, user).then(() => {
+              resolve();
+            }).catch((err) => {
+              reject(err);
+            });
+          });
+        } else {
+          this.userService.createNewUser(response.user.uid, user).then(() => {
+            resolve();
+          }).catch((err) => {
+            reject(err);
+          });
+        }
+      }).catch((err) => {
+        reject(err);
+      })
+    })
+  }
+
 }

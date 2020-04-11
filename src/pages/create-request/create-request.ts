@@ -17,6 +17,11 @@ import VectorSource from 'ol/source/Vector';
 import {Circle as CircleStyle, Fill, Stroke, Style, Text, Icon} from 'ol/style';
 import Point from 'ol/geom/Point';
 import Feature from 'ol/Feature';
+import {toLonLat} from 'ol/proj';
+import * as firebaseApp from 'firebase/app';
+import * as geofirex from 'geofirex';
+import {GeoFireClient} from "geofirex";
+import {UserSevice} from "../../services/user.sevice";
 
 @Component({
   templateUrl: './create-request.html'
@@ -29,8 +34,12 @@ export class CreateRequestPage implements OnInit{
   private markersLayer:VectorLayer;
   private chosenCoordinates:any;
 
-  constructor(public viewCtrl: ViewController, private loginService: LoginService, private afs: AngularFirestore, private fb: FormBuilder) {
-    
+  private geofireClient: GeoFireClient;
+
+  constructor(public viewCtrl: ViewController, private userService: UserSevice, private afs: AngularFirestore, private fb: FormBuilder) {
+
+    this.geofireClient = geofirex.init(firebaseApp);
+
     this.form = this.fb.group({
       'title': ['', [Validators.required]],
       'description': ['', [Validators.required]],
@@ -61,7 +70,7 @@ export class CreateRequestPage implements OnInit{
     this.map.addLayer(this.markersLayer);
     this.map.on('click', (evt)=> {
         this.markersLayer.getSource().clear(true);
-        this.chosenCoordinates = evt.coordinate;
+        this.chosenCoordinates = toLonLat(evt.coordinate);
         var iconFeature = new Feature({
             geometry: new Point(this.chosenCoordinates)
         });
@@ -74,7 +83,7 @@ export class CreateRequestPage implements OnInit{
 
         iconFeature.setStyle(iconStyle);
         this.markersLayer.getSource().addFeatures([iconFeature]);
-        
+
     });
     let firstTime = true;
 
@@ -89,7 +98,7 @@ export class CreateRequestPage implements OnInit{
     });
 
     geolocation.on('change', ()=>{
-      
+
         var pos = geolocation.getPosition();
         if (firstTime){
           firstTime = false;
@@ -107,14 +116,14 @@ export class CreateRequestPage implements OnInit{
     }
 
     const newRequest: Request = {
-      //TODO:: CAMBIAR EL LOCATION PER LA GEOLOCATION AQUELLA?
       ...this.form.getRawValue(),
-      location: this.chosenCoordinates,
-      createdAt: new Date(),
-      createdBy: this.loginService.getCurrentUser().uid,
+      uuid: `${this.userService.getCurrentUser().uid}-${new Date().getTime()}`,
+      location: this.geofireClient.point(this.chosenCoordinates[1], this.chosenCoordinates[0]),
+      createdAt: new Date().getTime(),
+      createdBy: this.userService.getCurrentUser().uid,
       status: "pending"
     };
-    this.requestsCollection.add(newRequest).then(() => this.viewCtrl.dismiss('created'));
+    this.requestsCollection.doc(newRequest.uuid).set(newRequest).then(() => this.viewCtrl.dismiss('created'));
   }
 
   cancel(): void {

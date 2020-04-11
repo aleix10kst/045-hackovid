@@ -2,16 +2,8 @@ import {Component, OnInit} from "@angular/core";
 import {AngularFirestore, AngularFirestoreDocument} from "@angular/fire/firestore";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Loading, LoadingController, NavController} from "ionic-angular";
-import {LoginService} from "../../services/login.service";
-
-export interface User {
-  uid: string;
-  username?: string;
-  name?: string;
-  lastname?: string;
-  email?: string;
-  phone?: string;
-}
+import {User} from "../../models/user";
+import {UserSevice} from "../../services/user.sevice";
 
 @Component({
   selector: 'user-page',
@@ -26,7 +18,7 @@ export class UserPage implements OnInit{
 
   loader: Loading;
 
-  constructor(private afs: AngularFirestore, private fb: FormBuilder, private loadingCtrl: LoadingController, private navController: NavController, private loginService: LoginService) {
+  constructor(private afs: AngularFirestore, private fb: FormBuilder, private loadingCtrl: LoadingController, private navController: NavController, private userService: UserSevice) {
     this.loader = this.loadingCtrl.create({
       content: 'Carregant...'
     });
@@ -37,7 +29,7 @@ export class UserPage implements OnInit{
       email: ['', [Validators.required]],
       phone: ['', [Validators.required]]
     });
-    this.currentUser = this.loginService.getCurrentUser().uid;
+    this.currentUser = this.userService.getCurrentUser().uid;
   }
 
   ngOnInit(): void {

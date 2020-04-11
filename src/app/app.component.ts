@@ -33,14 +33,13 @@ export class MyApp implements OnInit{
   }
 
   ngOnInit(): void {
-    this.loginService.isLoggedIn().then((response) => {
-      console.log(response);
-      if (!!response) {
+    this.loginService.isLoggedIn()
+      .then(() => {
         this.rootPage = HomePage;
-      } else {
+      })
+      .catch(() => {
         this.rootPage = LoginPage;
-      }
-    })
+      })
   }
 
   initializeApp() {

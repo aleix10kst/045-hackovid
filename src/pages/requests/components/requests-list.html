@@ -1,13 +1,20 @@
 <ion-content no-padding>
   <ion-list>
     <ion-list-header>{{ title }}</ion-list-header>
-    <ion-item *ngFor="let request of requests | async">
-      <h2>{{ request.title }}</h2>
-      <h3>Location</h3>
-      <p>{{ request.description}}</p>
-    </ion-item>
-    <ion-item *ngIf="!(requests | async)">
-      <h2>Actualment no tens cap petició</h2>
-    </ion-item>
+    <ng-container *ngIf="requests | async as requests">
+      <ng-container *ngIf="requests.length > 0; else noItems">
+        <ion-item *ngFor="let request of requests">
+          <h2>{{ request.title }}</h2>
+          <h3>Location</h3>
+          <p>{{ request.description}}</p>
+        </ion-item>
+      </ng-container>
+    </ng-container>
   </ion-list>
 </ion-content>
+
+<ng-template #noItems>
+  <ion-item>
+    <h2>Actualment no tens cap petició</h2>
+  </ion-item>
+</ng-template>
