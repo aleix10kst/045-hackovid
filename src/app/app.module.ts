@@ -4,7 +4,6 @@ import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
-import { ListPage } from '../pages/list/list';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -18,6 +17,7 @@ import {AngularFireAuthModule} from "@angular/fire/auth";
 import {LoginService} from "../services/login.service";
 import {RequestsModule} from "../pages/requests/requests.module";
 import {CreateRequestPage} from "../pages/create-request/create-request";
+import { EntitatsPage } from '../pages/entitats/entitats';
 
 const firebaseConfig = {
 
@@ -27,11 +27,11 @@ const firebaseConfig = {
   declarations: [
     MyApp,
     HomePage,
-    ListPage,
     UserPage,
     RegisterPage,
     LoginPage,
-    CreateRequestPage
+    CreateRequestPage,
+    EntitatsPage
   ],
   imports: [
     BrowserModule,
@@ -46,11 +46,11 @@ const firebaseConfig = {
   entryComponents: [
     MyApp,
     HomePage,
-    ListPage,
     UserPage,
     RegisterPage,
     LoginPage,
-    CreateRequestPage
+    CreateRequestPage,
+    EntitatsPage,
   ],
   providers: [
     StatusBar,
