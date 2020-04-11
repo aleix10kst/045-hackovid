@@ -170,7 +170,18 @@ export class HomePage implements OnInit, AfterViewInit {
               message: this.selectedRequest.description,
               buttons: [
                 {
-                  text: 'Tanca'
+                  text: 'Completa',
+                  handler: () => {
+                    this.requestCollection.doc(this.selectedRequest.uuid).update({
+                      status: 'completed',
+                    }).then(() => {
+                      const completedRequestToast = this.toastController.create({
+                        message: 'Has completat la petició',
+                        duration: 3000
+                      });
+                      completedRequestToast.present();
+                    })
+                  }
                 },
                 {
                   text: 'Rebutja',
@@ -187,6 +198,9 @@ export class HomePage implements OnInit, AfterViewInit {
                       canceledRequestToast.present();
                     })
                   }
+                },
+                {
+                  text: 'Tanca'
                 }
               ]
             });

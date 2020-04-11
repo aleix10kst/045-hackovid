@@ -32,7 +32,7 @@ const firebaseConfig = {
     RegisterPage,
     LoginPage,
     CreateRequestPage,
-    EntitatsPage
+    EntitatsPage,
   ],
   imports: [
     BrowserModule,
