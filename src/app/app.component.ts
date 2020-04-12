@@ -26,7 +26,7 @@ export class MyApp implements OnInit{
     // used for an example of ngFor and navigation
     this.pages = [
       { title: 'Home', component: HomePage },
-      { title: 'Les meves peticions', component: MyRequestsPage},
+      { title: 'Els meus encàrrecs', component: MyRequestsPage},
       { title: 'Entitats de voluntariat', component: EntitatsPage},
       { title: 'Perfil', component: UserPage}
     ];

@@ -16,8 +16,8 @@ export class CreatedRequestsTab extends RequestsList implements OnInit{
   }
 
   ngOnInit(): void {
-    this.title = 'Peticions creades';
-    this.noResults = 'Actualment no has creat cap petició';
+    this.title = 'Encàrrecs creats';
+    this.noResults = 'Actualment no has creat cap encàrrec';
     this.requestCollection = this.afs.collection('requests', ref => ref.where('createdBy', '==',this.userSevice.getCurrentUser().uid));
     this.requests = this.requestCollection.valueChanges();
   }
@@ -29,11 +29,11 @@ export class CreatedRequestsTab extends RequestsList implements OnInit{
     editModal.onDidDismiss((status: 'edited' | 'deleted' | 'canceled') => {
       switch (status) {
         case "edited":
-          toast.setMessage(`S'ha guardat el canvi a la petició`);
+          toast.setMessage(`S'ha guardat el canvi a l'encàrrec`);
           toast.present();
           break;
         case "deleted":
-          toast.setMessage(`S'ha eliminat la petició`);
+          toast.setMessage(`S'ha eliminat l'encàrrec`);
           toast.present();
           break;
       }

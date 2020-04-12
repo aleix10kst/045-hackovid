@@ -13,8 +13,8 @@ export class CompletedRequestsTab extends RequestsList implements OnInit {
   }
 
   ngOnInit(): void {
-    this.title = 'Peticions completades';
-    this.noResults = 'Actualment no tens cap petició completada';
+    this.title = 'Encàrrecs completats';
+    this.noResults = 'Actualment no has completat cap encàrrec.';
     this.requestCollection = this.afs.collection('requests', ref => ref.where('acceptedBy', '==',this.userSevice.getCurrentUser().uid).where('status', '==', 'completed'));
     this.requests = this.requestCollection.valueChanges();
   }

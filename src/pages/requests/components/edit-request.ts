@@ -34,8 +34,11 @@ export class EditRequestPage implements OnInit {
     this.form = this.fb.group({
       'title': ['', [Validators.required]],
       'description': ['', [Validators.required]],
-      'deliveryDate': ['']
-    });
+      'deliveryDate': [''],
+      'name': [''],
+      'phone': [''],
+      'email': ['']
+    })
     this.afs.collection<Request>('requests', ref => ref.where('uuid', '==', id)).snapshotChanges().pipe(first()).subscribe(([document]: [DocumentChangeAction<Request>]) => {
       this.selectedRequest = document;
       this.form.patchValue(document.payload.doc.data());

@@ -77,7 +77,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       switch (action) {
         case 'created':
           const toast = this.toastController.create({
-            message: `La teva petició s'ha creat correctament.`,
+            message: `El teu encàrrec s'ha creat correctament.`,
             duration: 3000
           });
           toast.present();
@@ -145,7 +145,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                     text: 'Cancel·la'
                   },
                   {
-                    text: 'Accepta la petició',
+                    text: 'Accepta l\'encàrrec',
                     handler: () => {
                       this.requestCollection.doc(this.selectedRequest.uuid).update({
                         status: 'accepted',
@@ -153,7 +153,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                         acceptedAt: new Date().getTime()
                       }).then(() => {
                         const acceptedRequestToast = this.toastController.create({
-                          message: 'Has acceptat la petició.',
+                          message: 'Has acceptat l\'encàrrec.',
                           duration: 3000
                         });
                         acceptedRequestToast.present();
@@ -177,7 +177,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                         status: 'completed',
                       }).then(() => {
                         const completedRequestToast = this.toastController.create({
-                          message: 'Has completat la petició',
+                          message: 'Has completat l\'encàrrec',
                           duration: 3000
                         });
                         completedRequestToast.present();
@@ -193,7 +193,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                         acceptedAt: null
                       }).then(() => {
                         const canceledRequestToast = this.toastController.create({
-                          message: 'Has cancel·lat la petició',
+                          message: 'Has cancel·lat l\'encàrrec',
                           duration: 3000
                         });
                         canceledRequestToast.present();
