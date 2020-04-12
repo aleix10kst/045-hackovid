@@ -1,14 +1,8 @@
-<ion-header>
-  <ion-navbar>
-    <button ion-button menuToggle>
-      <ion-icon name="menu"></ion-icon>
-    </button>
-    <ion-title>Home</ion-title>
-  </ion-navbar>
-</ion-header>
-
-<ion-content  no-padding >
-
+<ion-content  no-bounce no-padding >
+  <ion-fab left top>
+    <button ion-fab menuToggle color="primary"><ion-icon ios="ios-menu" md="md-menu"></ion-icon></button>
+  </ion-fab>
+  
   <div id="map"></div>
 
   <ion-fab left bottom *ngIf="canAddRequests">
