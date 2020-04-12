@@ -1,11 +1,11 @@
 # Voluntariatc19
 
 ### Versió Android :octocat: :package:
-####Descarrega aquí  [![Android APK](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/aleix10kst/045-hackovid/releases/download/1.0.0/voluntariat.apk)
+#### Descarrega aquí  [![Android APK](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/aleix10kst/045-hackovid/releases/download/1.0.0/voluntariat.apk)
 https://github.com/aleix10kst/045-hackovid/releases/download/1.0.0/voluntariat.apk
 
 ### Versió aplicatiu web  🖥️
-####Enllaç  [![Firebase](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://hackovid-2020.firebaseapp.com/)
+#### Enllaç  [![Firebase](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://hackovid-2020.firebaseapp.com/)
 
 # Quèquicom?
 
