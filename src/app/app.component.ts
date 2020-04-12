@@ -4,11 +4,11 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { HomePage } from '../pages/home/home';
-import { ListPage } from '../pages/list/list';
 import {UserPage} from "../pages/user/user";
 import {LoginPage} from "../pages/login/login";
 import {LoginService} from "../services/login.service";
 import {MyRequestsPage} from "../pages/requests/my-requests";
+import { NotaLegalPage } from "../pages/nota-legal/nota-legal";
 
 @Component({
   templateUrl: 'app.html'
@@ -26,21 +26,20 @@ export class MyApp implements OnInit{
     // used for an example of ngFor and navigation
     this.pages = [
       { title: 'Home', component: HomePage },
-      { title: 'List', component: ListPage },
-      { title: 'Les meves peticions', component: MyRequestsPage},
-      { title: 'Perfil', component: UserPage}
+      { title: 'Els meus encàrrecs', component: MyRequestsPage},
+      { title: 'Perfil', component: UserPage},
+      { title: 'Nota Legal', component: NotaLegalPage}
     ];
   }
 
   ngOnInit(): void {
-    this.loginService.isLoggedIn().then((response) => {
-      console.log(response);
-      if (!!response) {
+    this.loginService.isLoggedIn()
+      .then(() => {
         this.rootPage = HomePage;
-      } else {
+      })
+      .catch(() => {
         this.rootPage = LoginPage;
-      }
-    })
+      })
   }
 
   initializeApp() {

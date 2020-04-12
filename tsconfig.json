@@ -16,7 +16,10 @@
     "paths": {
       "ol": ["node_modules/ol/src"],
       "ol/*": ["node_modules/ol/src/*"]
-    }
+    },
+    "types": [
+      "node"
+    ]
   },
   "include": [
     "src/**/*.ts",

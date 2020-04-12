@@ -1,6 +1,19 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Nou encàrrec
+    </ion-title>
+    <ion-buttons start>
+      <button ion-button (click)="cancel()">
+        <span ion-text color="primary">Tanca</span>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content padding>
-  <h3>Crea una nova petició</h3>
-  <form [formGroup]="form">
+  <h3>Crea un nou encàrrec</h3>
+  <form [formGroup]="form" padding-vertical>
     <ion-list>
       <ion-item>
         <ion-label floating>Títol</ion-label>
@@ -8,24 +21,22 @@
       </ion-item>
       <ion-item>
         <ion-label floating>Descripció</ion-label>
-        <ion-textarea formControlName="description"></ion-textarea>
+        <ion-textarea rows="6" formControlName="description"></ion-textarea>
       </ion-item>
       <ion-item>
-        <ion-label floating>Data</ion-label>
+        <ion-label stacked>Informació de contacte</ion-label>
+        <ion-input placeholder="Nom" formControlName="name"></ion-input>
+        <ion-input placeholder="Telèfon" formControlName="phone"></ion-input>
+        <ion-input placeholder="Correu electrònic" formControlName="email"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Data d'entrega (opcional)</ion-label>
         <ion-datetime displayFormat="MM/DD/YYYY" formControlName="deliveryDate"></ion-datetime>
       </ion-item>
-      <div id="mapSelector">
-
-      </div>
-
-      <!--<ion-item>
-        <ion-label floating>Lat</ion-label>
-        <ion-input type="number" formControlName="lat"></ion-input>
-      </ion-item>
       <ion-item>
-        <ion-label floating>Lon</ion-label>
-        <ion-input type="number" formControlName="lon"></ion-input>
-      </ion-item>-->
+        <ion-label stacked>Adreça</ion-label>
+      </ion-item>
+      <div id="mapRequest"></div>
     </ion-list>
     <button ion-button color="secondary" block (click)="save()">Crea</button>
     <button ion-button color="danger" block margin-top (click)="cancel()">Cancel·la</button>

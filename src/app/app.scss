@@ -19,9 +19,17 @@
   width: 120px;
 }
 
-#mapSelector{
-  height:200px;
-  width:80%;
-  padding-left:10%;
-  padding-right:10%;
+#mapRequest{
+  height: 300px;
+  width: 100%;
+}
+
+#map{
+  height:100%;
+  width:100%;
+  color:blue
+}
+
+.scroll-content{
+  overflow-y:auto;
 }

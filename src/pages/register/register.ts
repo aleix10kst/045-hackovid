@@ -1,11 +1,8 @@
 import {Component, OnInit} from "@angular/core";
-import {NavController} from "ionic-angular";
+import {Loading, LoadingController, NavController} from "ionic-angular";
 import {HomePage} from "../home/home";
-import {AngularFireAuth} from "@angular/fire/auth";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import UserCredential = firebase.auth.UserCredential;
-import {AngularFirestore, AngularFirestoreCollection} from "@angular/fire/firestore";
-import {User} from "../user/user";
+import {LoginService} from "../../services/login.service";
 
 @Component({
   selector: 'register-page',
@@ -15,10 +12,13 @@ export class RegisterPage implements OnInit {
 
   form: FormGroup;
 
-  private userCollection$: AngularFirestoreCollection<User>;
+  private loading: Loading;
 
-  constructor(private navController: NavController, private afAuth: AngularFireAuth, private fb: FormBuilder, private afs: AngularFirestore) {
-    this.userCollection$ = this.afs.collection('users');
+  constructor(private navController: NavController, private fb: FormBuilder, private loginService: LoginService, private loadingController: LoadingController) {
+    this.loading = this.loadingController.create({
+      content: 'Registrant el compte...',
+      dismissOnPageChange: true
+    })
   }
 
   ngOnInit(): void {
@@ -26,6 +26,7 @@ export class RegisterPage implements OnInit {
       email: ['', [Validators.required]],
       password: ['', [Validators.required]],
       password2: ['', [Validators.required]],
+      codiEntitat: ['']
     })
   }
 
@@ -34,14 +35,20 @@ export class RegisterPage implements OnInit {
   }
 
   onClickRegister(): void {
-    const { email, password } = this.form.getRawValue();
-    this.afAuth.auth.createUserWithEmailAndPassword(email, password).then((response: UserCredential) => {
-      const user = {email: response.user.email, name: response.user.displayName, uid: response.user.uid};
-      this.userCollection$.doc(response.user.uid).set(user);
-      this.navController.setRoot(HomePage);
-    }).catch((err) => {
-      console.error(err);
-    })
+    if (this.form.invalid) {
+      return;
+    }
+    this.loading.present();
+    const {email, password, codiEntitat} = this.form.getRawValue();
+    this.loginService.createWithUserEmail(email, password, codiEntitat)
+      .then(() => {
+        this.loading.dismiss();
+        this.navController.setRoot(HomePage);
+      })
+      .catch((error) => {
+        this.loading.dismiss();
+        console.error(error);
+      });
 
   }
 }

@@ -4,7 +4,6 @@ import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
-import { ListPage } from '../pages/list/list';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -18,16 +17,17 @@ import {AngularFireAuthModule} from "@angular/fire/auth";
 import {LoginService} from "../services/login.service";
 import {RequestsModule} from "../pages/requests/requests.module";
 import {CreateRequestPage} from "../pages/create-request/create-request";
+import {UserSevice} from "../services/user.sevice";
+import { Geolocation } from '@ionic-native/geolocation';
+import {NotaLegalModule} from "../pages/nota-legal/nota-legal.module";
 
 const firebaseConfig = {
-
 };
 
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
-    ListPage,
     UserPage,
     RegisterPage,
     LoginPage,
@@ -40,23 +40,25 @@ const firebaseConfig = {
     AngularFireAuthModule,
     ReactiveFormsModule,
     RequestsModule,
+    NotaLegalModule,
     IonicModule.forRoot(MyApp),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
     HomePage,
-    ListPage,
     UserPage,
     RegisterPage,
     LoginPage,
     CreateRequestPage
   ],
   providers: [
+    Geolocation,
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    LoginService
+    LoginService,
+    UserSevice
   ]
 })
 export class AppModule {}
