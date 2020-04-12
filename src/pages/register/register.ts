@@ -15,7 +15,7 @@ export class RegisterPage implements OnInit {
   form: FormGroup;
 
 
-  constructor(private navController: NavController, private afAuth: AngularFireAuth, private fb: FormBuilder, private afs: AngularFirestore, private loginService: LoginService) {
+  constructor(private navController: NavController, private afAuth: AngularFireAuth, private fb: FormBuilder, private loginService: LoginService) {
   }
 
   ngOnInit(): void {
