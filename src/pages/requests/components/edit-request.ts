@@ -68,24 +68,24 @@ export class EditRequestPage implements OnInit {
   }
 
   private initalizeMap(): void {
-    const currentLocation = this.userService.getCurrentLocation();
+    let geolocation = this.selectedRequest.payload.doc.data().location as any;
     let mapOptions: GoogleMapOptions = {
       camera: {
         target: {
-          lat: currentLocation.lat,
-          lng: currentLocation.lon
+          lat: geolocation.geopoint.latitude,
+          lng: geolocation.geopoint.longitude
         },
         zoom: 18,
         tilt: 30
       }
     };
     this.map = GoogleMaps.create('mapRequest', mapOptions);
-
+    
     this.map.addMarker({
       title: '',
       position: {
-        lat: this.selectedRequest.payload.doc.data().location.latitude,
-        lng: this.selectedRequest.payload.doc.data().location.longitude,
+        lat: geolocation.geopoint.latitude,
+        lng: geolocation.geopoint.longitude
       }
     });
 

@@ -238,6 +238,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   private initializeMap(): void {
     this.geolocation.getCurrentPosition().then((position: Position) => {
       this.currentPoint = this.geo.point(position.coords.latitude, position.coords.longitude);
+      this.userSevice.setCurrentLocation({lat: position.coords.latitude, lon: position.coords.longitude});
       const mapOptions: GoogleMapOptions = {
         camera: {
           target: {
