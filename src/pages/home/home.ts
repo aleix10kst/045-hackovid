@@ -135,10 +135,21 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
         marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(([,marker]) => {
           this.selectedRequest = marker["request"];
           let alert: Alert;
+          const contactInfo: string[] = [];
+          if (this.selectedRequest.name) {
+            contactInfo.push(`Nom: ${this.selectedRequest.name}`);
+          }
+          if (this.selectedRequest.email) {
+            contactInfo.push(`Correu electrònic: ${this.selectedRequest.email}`);
+          }
+          if (this.selectedRequest.phone) {
+            contactInfo.push(`Telèfon: ${this.selectedRequest.phone}`);
+          }
           switch (this.selectedRequest.status) {
             case 'pending':
               alert = this.alertCtrl.create({
                 title: this.selectedRequest.title,
+                subTitle: contactInfo.join('-'),
                 message: this.selectedRequest.description,
                 buttons: [
                   {
@@ -204,6 +215,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
               }
               alert = this.alertCtrl.create({
                 title: this.selectedRequest.title,
+                subTitle: contactInfo.join('-'),
                 message: this.selectedRequest.description,
                 buttons: acceptButtons
               });

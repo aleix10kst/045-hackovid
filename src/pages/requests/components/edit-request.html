@@ -42,6 +42,6 @@
       </ion-item>
       <div id="mapRequest"></div>
     </ion-list>
-    <button ion-button color="danger" block margin-top (click)="onClickDelete()" *ngIf="selectedRequest.payload.doc.data().status === 'pending'">Elimina</button>
+    <button ion-button color="danger" block margin-top (click)="onClickDelete()" *ngIf="canBeDeleted">Elimina</button>
   </form>
 </ion-content>

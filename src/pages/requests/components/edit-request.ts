@@ -18,6 +18,8 @@ export class EditRequestPage implements OnInit {
 
   selectedRequest: DocumentChangeAction<Request>;
 
+  canBeDeleted: boolean;
+
   private map: GoogleMap;
 
   private chosenCoordinates: { lat: number, lon: number };
@@ -40,6 +42,7 @@ export class EditRequestPage implements OnInit {
     })
     this.afs.collection<Request>('requests', ref => ref.where('uuid', '==', id)).snapshotChanges().pipe(first()).subscribe(([document]: [DocumentChangeAction<Request>]) => {
       this.selectedRequest = document;
+      this.canBeDeleted = this.selectedRequest.payload.doc.data().status === 'pending';
       this.form.patchValue(document.payload.doc.data());
       this.initalizeMap();
     });

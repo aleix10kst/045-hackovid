@@ -20,4 +20,9 @@ export interface Request {
   // Accepted metadata
   acceptedAt: Date;
   acceptedBy: string;
+
+  // Contact info
+  name: string;
+  phone: string;
+  email: string;
 }
