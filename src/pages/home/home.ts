@@ -16,11 +16,10 @@ import {
   Marker,
   MarkerIcon
 } from '@ionic-native/google-maps';
-import {GeolocationPosition, Plugins} from '@capacitor/core';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
 import {GeoFireClient, GeoQueryDocument} from "geofirex";
 import {FirePoint} from "geofirex/dist/client";
-
-const {Geolocation} = Plugins;
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -38,8 +37,10 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   private currentPoint: FirePoint;
   private markers: Marker[];
   private markerPosition: Marker;
+  private geolocationSubscription:Subscription;
 
   constructor(
+    private geolocation: Geolocation,
     private modalCtrl: ModalController,
     private toastController: ToastController,
     private alertCtrl: AlertController,
@@ -64,6 +65,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
         'API_KEY_FOR_BROWSER_DEBUG': 'XXXXXXXXXXXXXXXXXXXXXXXXX'
       });
       this.initializeMap();
+      this.subscriptions();
     });
   }
 
@@ -232,7 +234,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initializeMap(): void {
-    Geolocation.getCurrentPosition().then((position: GeolocationPosition) => {
+    this.geolocation.getCurrentPosition().then((position: Position) => {
       this.currentPoint = this.geo.point(position.coords.latitude, position.coords.longitude);
       const mapOptions: GoogleMapOptions = {
         camera: {
@@ -264,7 +266,16 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  private subscriptions(){
+    this.geolocationSubscription = 
+          this.geolocation.watchPosition().subscribe(position => {
+            this.currentPoint = this.geo.point(position.coords.latitude, position.coords.longitude);
+            this.paintMap();
+          });
+  }
+
   ngOnDestroy(): void {
     this.map.off(GoogleMapsEvent.MARKER_CLICK);
+    this.geolocationSubscription.unsubscribe();
   }
 }

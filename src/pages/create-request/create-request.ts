@@ -7,10 +7,11 @@ import * as firebaseApp from 'firebase/app';
 import * as geofirex from 'geofirex';
 import {GeoFireClient} from 'geofirex';
 import {UserSevice} from "../../services/user.sevice";
-import {GoogleMap, GoogleMapOptions, GoogleMaps, GoogleMapsEvent, LatLng} from "@ionic-native/google-maps"
-import {GeolocationPosition, Plugins} from '@capacitor/core';
+import {GoogleMap, GoogleMapOptions, GoogleMaps, GoogleMapsEvent, LatLng} from "@ionic-native/google-maps";
+import { Geolocation } from '@ionic-native/geolocation/ngx';
+/*import {GeolocationPosition, Plugins} from '@capacitor/core';*/
 
-const {Geolocation} = Plugins;
+/*const {Geolocation} = Plugins;*/
 
 @Component({
   templateUrl: './create-request.html'
@@ -24,7 +25,7 @@ export class CreateRequestPage implements OnInit, OnDestroy {
 
   private geofireClient: GeoFireClient;
 
-  constructor(public viewCtrl: ViewController, private userService: UserSevice, private afs: AngularFirestore, private fb: FormBuilder) {
+  constructor(private geolocation: Geolocation, public viewCtrl: ViewController, private userService: UserSevice, private afs: AngularFirestore, private fb: FormBuilder) {
 
     this.geofireClient = geofirex.init(firebaseApp);
 
@@ -65,7 +66,7 @@ export class CreateRequestPage implements OnInit, OnDestroy {
   }
 
   private initalizeMap(): void {
-    Geolocation.getCurrentPosition().then((coordinates: GeolocationPosition) => {
+    this.geolocation.getCurrentPosition().then((coordinates: Position) => {
       let mapOptions: GoogleMapOptions = {
         camera: {
           target: {
