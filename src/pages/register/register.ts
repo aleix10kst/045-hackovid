@@ -1,9 +1,7 @@
 import {Component, OnInit} from "@angular/core";
 import {NavController} from "ionic-angular";
 import {HomePage} from "../home/home";
-import {AngularFireAuth} from "@angular/fire/auth";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {AngularFirestore} from "@angular/fire/firestore";
 import {LoginService} from "../../services/login.service";
 
 @Component({
@@ -15,7 +13,7 @@ export class RegisterPage implements OnInit {
   form: FormGroup;
 
 
-  constructor(private navController: NavController, private afAuth: AngularFireAuth, private fb: FormBuilder, private loginService: LoginService) {
+  constructor(private navController: NavController, private fb: FormBuilder, private loginService: LoginService) {
   }
 
   ngOnInit(): void {
