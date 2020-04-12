@@ -28,7 +28,10 @@ export class CreateRequestPage implements OnInit, OnDestroy {
     this.form = this.fb.group({
       'title': ['', [Validators.required]],
       'description': ['', [Validators.required]],
-      'deliveryDate': ['']
+      'deliveryDate': [''],
+      'name': [''],
+      'phone': [''],
+      'email': ['']
     })
   }
 

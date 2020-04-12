@@ -28,12 +28,20 @@
         <ion-textarea rows="6" formControlName="description"></ion-textarea>
       </ion-item>
       <ion-item>
+        <ion-label stacked>Informació de contacte</ion-label>
+        <ion-input placeholder="Nom" formControlName="name"></ion-input>
+        <ion-input placeholder="Telèfon" formControlName="phone"></ion-input>
+        <ion-input placeholder="Correu electrònic" formControlName="email"></ion-input>
+      </ion-item>
+      <ion-item>
         <ion-label floating>Data d'entrega (opcional)</ion-label>
         <ion-datetime displayFormat="MM/DD/YYYY" formControlName="deliveryDate"></ion-datetime>
       </ion-item>
-      <ion-item></ion-item>
+      <ion-item>
+        <ion-label stacked>Adreça</ion-label>
+      </ion-item>
       <div id="mapRequest"></div>
-      <button ion-button color="danger" block margin-top (click)="onClickDelete()">Elimina</button>
     </ion-list>
+    <button ion-button color="danger" block margin-top (click)="onClickDelete()">Elimina</button>
   </form>
 </ion-content>
