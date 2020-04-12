@@ -19,7 +19,6 @@ export class NotaLegalPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad NotaLegalPage');
   }
 
 }
