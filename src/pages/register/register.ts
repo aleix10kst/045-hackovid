@@ -1,5 +1,5 @@
 import {Component, OnInit} from "@angular/core";
-import {NavController} from "ionic-angular";
+import {Loading, LoadingController, NavController} from "ionic-angular";
 import {HomePage} from "../home/home";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {LoginService} from "../../services/login.service";
@@ -12,8 +12,13 @@ export class RegisterPage implements OnInit {
 
   form: FormGroup;
 
+  private loading: Loading;
 
-  constructor(private navController: NavController, private fb: FormBuilder, private loginService: LoginService) {
+  constructor(private navController: NavController, private fb: FormBuilder, private loginService: LoginService, private loadingController: LoadingController) {
+    this.loading = this.loadingController.create({
+      content: 'Registrant el compte...',
+      dismissOnPageChange: true
+    })
   }
 
   ngOnInit(): void {
@@ -30,12 +35,18 @@ export class RegisterPage implements OnInit {
   }
 
   onClickRegister(): void {
+    if (this.form.invalid) {
+      return;
+    }
+    this.loading.present();
     const {email, password, codiEntitat} = this.form.getRawValue();
     this.loginService.createWithUserEmail(email, password, codiEntitat)
       .then(() => {
+        this.loading.dismiss();
         this.navController.setRoot(HomePage);
       })
       .catch((error) => {
+        this.loading.dismiss();
         console.error(error);
       });
 

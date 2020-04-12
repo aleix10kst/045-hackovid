@@ -68,7 +68,7 @@ export class CreateRequestPage implements OnInit, OnDestroy {
           lat: currentLocation.lat,
           lng: currentLocation.lon
         },
-        zoom: 18,
+        zoom: 15,
         tilt: 30
       }
     };

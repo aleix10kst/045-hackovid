@@ -245,7 +245,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           },
-          zoom: 18,
+          zoom: 15,
           tilt: 30
         }
       };

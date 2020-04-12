@@ -1,5 +1,5 @@
 import {Component, OnInit} from "@angular/core";
-import {NavController} from "ionic-angular";
+import {Loading, LoadingController, NavController} from "ionic-angular";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {HomePage} from "../home/home";
 import {RegisterPage} from "../register/register";
@@ -11,18 +11,23 @@ import {LoginService} from "../../services/login.service";
   selector: 'login-page',
   templateUrl: './login.html'
 })
-export class LoginPage implements OnInit{
+export class LoginPage implements OnInit {
 
   form: FormGroup;
 
   showError: boolean = false;
   errorMessage: string;
 
-  constructor(private navController: NavController, private fb: FormBuilder, private afAuth: AngularFireAuth, private loginService: LoginService) {
+  private loading: Loading;
+
+  constructor(private navController: NavController, private fb: FormBuilder, private afAuth: AngularFireAuth, private loginService: LoginService, private loadingController: LoadingController) {
+    this.loading = this.loadingController.create({
+      content: 'Accedint...'
+    });
     this.form = this.fb.group({
       'email': ['', [Validators.required]],
       'password': ['', [Validators.required]]
-    })
+    });
   }
 
   ngOnInit(): void {
@@ -51,22 +56,36 @@ export class LoginPage implements OnInit{
       return;
     }
     const {email, password} = this.form.getRawValue();
+    this.loading.present();
     this.loginService.loginWithEmail(email, password).then(() => {
+      this.loading.dismiss();
       this.navController.setRoot(HomePage);
     })
       .catch(({code, message}) => {
-        if (code === 'auth/user-not-found') {
-          this.showError = !this.showError;
-          this.errorMessage = `Aquest compte no està donat d'alta al sistema`;
-          setTimeout(() => {
-            this.showError = !this.showError;
-            this.errorMessage = '';
-          }, 3000)
+        this.loading.dismiss();
+        let errorMessage: string;
+        switch(code) {
+          case 'auth/user-not-found':
+            errorMessage = `Aquest compte no està donat d'alta al sistema`;
+            break;
+          case 'auth/wrong-password':
+            errorMessage = `La contrasenya no és correcta.`;
+            break;
         }
+        this.displayError(errorMessage);
       });
   }
 
   onClickRegistra(): void {
     this.navController.push(RegisterPage);
+  }
+
+  private displayError(message: string): void {
+    this.showError = !this.showError;
+    this.errorMessage = message;
+    setTimeout(() => {
+      this.showError = !this.showError;
+      this.errorMessage = '';
+    }, 3000)
   }
 }
