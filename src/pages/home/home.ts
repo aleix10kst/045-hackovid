@@ -149,7 +149,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
             case 'pending':
               alert = this.alertCtrl.create({
                 title: this.selectedRequest.title,
-                subTitle: contactInfo.join('-'),
+                subTitle: contactInfo.join(', '),
                 message: this.selectedRequest.description,
                 buttons: [
                   {
@@ -215,7 +215,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
               }
               alert = this.alertCtrl.create({
                 title: this.selectedRequest.title,
-                subTitle: contactInfo.join('-'),
+                subTitle: contactInfo.join(', '),
                 message: this.selectedRequest.description,
                 buttons: acceptButtons
               });
