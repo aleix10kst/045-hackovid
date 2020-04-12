@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
-import {Alert, AlertController, ModalController, Platform, ToastController} from 'ionic-angular';
+import {Alert, AlertButton, AlertController, ModalController, Platform, ToastController} from 'ionic-angular';
 import {CreateRequestPage} from "../create-request/create-request";
 import {AngularFirestore, AngularFirestoreCollection} from "@angular/fire/firestore";
 import {Request} from "../../models/request";
@@ -51,7 +51,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.radius = 10;
+    this.radius = 5;
     this.markers = [];
   }
 
@@ -110,7 +110,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   paintMap() {
     this.geo.query('requests').within(this.currentPoint, this.radius, 'location').subscribe((requests: GeoQueryDocument[]) => {
       this.clearMarkers();
-      console.log(requests);
       requests.forEach((request: any) => {
         let iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=P&size=50&hoffset=1&background=FACF1B";//groc
         if (request.status === "accepted") {
@@ -166,10 +165,11 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
               alert.present();
               break;
             case 'accepted':
-              alert = this.alertCtrl.create({
-                title: this.selectedRequest.title,
-                message: this.selectedRequest.description,
-                buttons: [
+              let acceptButtons: AlertButton[] = [{
+                text: 'Tanca'
+              }];
+              if (this.selectedRequest.acceptedBy === this.userSevice.getCurrentUser().uid) {
+                acceptButtons.unshift(
                   {
                     text: 'Completa',
                     handler: () => {
@@ -199,11 +199,13 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                         canceledRequestToast.present();
                       })
                     }
-                  },
-                  {
-                    text: 'Tanca'
                   }
-                ]
+                )
+              }
+              alert = this.alertCtrl.create({
+                title: this.selectedRequest.title,
+                message: this.selectedRequest.description,
+                buttons: acceptButtons
               });
               alert.present();
               break;
@@ -236,6 +238,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   private initializeMap(): void {
     this.geolocation.getCurrentPosition().then((position: Position) => {
       this.currentPoint = this.geo.point(position.coords.latitude, position.coords.longitude);
+      this.userSevice.setCurrentLocation({lat: position.coords.latitude, lon: position.coords.longitude});
       const mapOptions: GoogleMapOptions = {
         camera: {
           target: {
@@ -267,8 +270,9 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private subscriptions(){
-    this.geolocationSubscription = 
+    this.geolocationSubscription =
           this.geolocation.watchPosition().subscribe(position => {
+            this.userSevice.setCurrentLocation({lat: position.coords.latitude, lon: position.coords.longitude});
             this.currentPoint = this.geo.point(position.coords.latitude, position.coords.longitude);
             this.paintMap();
           });

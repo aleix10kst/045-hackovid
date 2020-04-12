@@ -19,7 +19,6 @@ export class EntitatsPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad EntitatsPage');
   }
 
 }

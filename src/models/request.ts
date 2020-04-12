@@ -1,10 +1,12 @@
+import {GeoFirePoint} from "geofirex/dist/point";
+
 export interface Request {
   uuid: string;
   title: string;
   description: string;
   deliveryDate?: Date;
   userId: string;
-  location: any;
+  location: GeoFirePoint;
 
   status: 'pending' | 'accepted' | 'completed';
 

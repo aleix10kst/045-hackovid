@@ -3,10 +3,16 @@ import {User} from "../models/user";
 import {AngularFirestore, AngularFirestoreCollection} from "@angular/fire/firestore";
 import {first} from "rxjs/operators";
 
+export interface CurrentLocation {
+  lat: number;
+  lon: number;
+}
+
 @Injectable()
 export class UserSevice {
 
   private user: User;
+  private currentLocation: CurrentLocation;
 
   private userCollection$: AngularFirestoreCollection<User>;
 
@@ -38,6 +44,14 @@ export class UserSevice {
 
   isSuperUser(): boolean {
     return this.user && this.user.roles && this.user.roles.indexOf('superuser') >= 0;
+  }
+
+  setCurrentLocation(currentLocation: CurrentLocation): void {
+    this.currentLocation = currentLocation;
+  }
+
+  getCurrentLocation(): CurrentLocation {
+    return this.currentLocation;
   }
 
 }
