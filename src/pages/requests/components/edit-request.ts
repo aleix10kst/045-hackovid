@@ -5,7 +5,6 @@ import {AngularFirestore, DocumentChangeAction} from "@angular/fire/firestore";
 import {Request} from "../../../models/request";
 import {first} from "rxjs/operators";
 import {GoogleMap, GoogleMapOptions, GoogleMaps, GoogleMapsEvent, LatLng} from "@ionic-native/google-maps";
-import {UserSevice} from "../../../services/user.sevice";
 import * as firebaseApp from 'firebase/app';
 import * as geofirex from 'geofirex';
 import {GeoFireClient} from "geofirex";
@@ -25,7 +24,7 @@ export class EditRequestPage implements OnInit {
 
   private geoClient: GeoFireClient;
 
-  constructor(private navParams: NavParams, private viewCtrl: ViewController, private fb: FormBuilder, private afs: AngularFirestore, private userService: UserSevice) {
+  constructor(private navParams: NavParams, private viewCtrl: ViewController, private fb: FormBuilder, private afs: AngularFirestore) {
     this.geoClient = geofirex.init(firebaseApp);
   }
 
@@ -80,7 +79,7 @@ export class EditRequestPage implements OnInit {
       }
     };
     this.map = GoogleMaps.create('mapRequest', mapOptions);
-    
+
     this.map.addMarker({
       title: '',
       position: {
