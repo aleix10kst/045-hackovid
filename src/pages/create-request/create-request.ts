@@ -8,7 +8,7 @@ import * as geofirex from 'geofirex';
 import {GeoFireClient} from 'geofirex';
 import {UserSevice} from "../../services/user.sevice";
 import {GoogleMap, GoogleMapOptions, GoogleMaps, GoogleMapsEvent, LatLng} from "@ionic-native/google-maps";
-import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { Geolocation } from '@ionic-native/geolocation';
 /*import {GeolocationPosition, Plugins} from '@capacitor/core';*/
 
 /*const {Geolocation} = Plugins;*/

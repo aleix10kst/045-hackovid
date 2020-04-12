@@ -16,7 +16,7 @@ import {
   Marker,
   MarkerIcon
 } from '@ionic-native/google-maps';
-import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { Geolocation } from '@ionic-native/geolocation';
 import {GeoFireClient, GeoQueryDocument} from "geofirex";
 import {FirePoint} from "geofirex/dist/client";
 import { Subscription } from 'rxjs';
@@ -61,8 +61,8 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
     this.platform.ready().then(() => {
       Environment.setEnv({
-        'API_KEY_FOR_BROWSER_RELEASE': 'XXXXXXXXXXXXXXXXXXXXXXXX',
-        'API_KEY_FOR_BROWSER_DEBUG': 'XXXXXXXXXXXXXXXXXXXXXXXXX'
+        'API_KEY_FOR_BROWSER_RELEASE': 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+        'API_KEY_FOR_BROWSER_DEBUG': 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
       });
       this.initializeMap();
       this.subscriptions();
