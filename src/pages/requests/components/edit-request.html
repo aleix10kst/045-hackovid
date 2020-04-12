@@ -5,14 +5,12 @@
     </ion-title>
     <ion-buttons start>
       <button ion-button (click)="onClickDismiss()">
-        <span ion-text color="primary" showWhen="ios">Tanca</span>
-        <ion-icon name="md-close" showWhen="android,windows"></ion-icon>
+        <span ion-text color="primary">Tanca</span>
       </button>
     </ion-buttons>
     <ion-buttons end>
       <button ion-button (click)="onClickSave()">
-        <span ion-text color="primary" showWhen="ios">Edita</span>
-        <ion-icon name="md-close" showWhen="android,windows"></ion-icon>
+        <span ion-text color="primary">Edita</span>
       </button>
     </ion-buttons>
   </ion-toolbar>
@@ -33,6 +31,8 @@
         <ion-label floating>Data d'entrega (opcional)</ion-label>
         <ion-datetime displayFormat="MM/DD/YYYY" formControlName="deliveryDate"></ion-datetime>
       </ion-item>
+      <ion-item></ion-item>
+      <div id="mapRequest"></div>
       <button ion-button color="danger" block margin-top (click)="onClickDelete()">Elimina</button>
     </ion-list>
   </form>

@@ -7,11 +7,7 @@ import * as firebaseApp from 'firebase/app';
 import * as geofirex from 'geofirex';
 import {GeoFireClient} from 'geofirex';
 import {UserSevice} from "../../services/user.sevice";
-import {GoogleMap, GoogleMapOptions, GoogleMaps, GoogleMapsEvent, LatLng} from "@ionic-native/google-maps";
-import { Geolocation } from '@ionic-native/geolocation';
-/*import {GeolocationPosition, Plugins} from '@capacitor/core';*/
-
-/*const {Geolocation} = Plugins;*/
+import {GoogleMap, GoogleMapOptions, GoogleMaps, GoogleMapsEvent, LatLng, MarkerIcon} from "@ionic-native/google-maps";
 
 @Component({
   templateUrl: './create-request.html'
@@ -25,7 +21,7 @@ export class CreateRequestPage implements OnInit, OnDestroy {
 
   private geofireClient: GeoFireClient;
 
-  constructor(private geolocation: Geolocation, public viewCtrl: ViewController, private userService: UserSevice, private afs: AngularFirestore, private fb: FormBuilder) {
+  constructor(public viewCtrl: ViewController, private userService: UserSevice, private afs: AngularFirestore, private fb: FormBuilder) {
 
     this.geofireClient = geofirex.init(firebaseApp);
 
@@ -38,12 +34,8 @@ export class CreateRequestPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.requestsCollection = this.afs.collection<Request>('/requests');
-  }
-
-  ionViewWillEnter(): void {
     this.initalizeMap();
   }
-
 
   cancel(): void {
     this.viewCtrl.dismiss('canceled');
@@ -66,28 +58,40 @@ export class CreateRequestPage implements OnInit, OnDestroy {
   }
 
   private initalizeMap(): void {
-    this.geolocation.getCurrentPosition().then((coordinates: Position) => {
-      let mapOptions: GoogleMapOptions = {
-        camera: {
-          target: {
-            lat: coordinates.coords.latitude,
-            lng: coordinates.coords.longitude
-          },
-          zoom: 18,
-          tilt: 30
+    const currentLocation = this.userService.getCurrentLocation();
+    let mapOptions: GoogleMapOptions = {
+      camera: {
+        target: {
+          lat: currentLocation.lat,
+          lng: currentLocation.lon
+        },
+        zoom: 18,
+        tilt: 30
+      }
+    };
+    this.map = GoogleMaps.create('mapRequest', mapOptions);
+    let icon = {} as MarkerIcon;
+    icon["size"] = {};
+    icon["url"] = 'assets/imgs/myPos.svg';
+    icon["size"]["width"] = 40;
+    icon["size"]["height"] = 40;
+
+    this.map.addMarkerSync({
+      icon: icon,
+      position: {
+        lat: currentLocation.lat,
+        lng: currentLocation.lon
+      }
+    });
+    this.map.on(GoogleMapsEvent.MAP_CLICK).subscribe(([latLng]: [LatLng]) => {
+      this.chosenCoordinates = {lat: latLng.lat, lon: latLng.lng};
+      this.map.clear();
+      this.map.addMarker({
+        title: '',
+        position: {
+          lat: latLng.lat,
+          lng: latLng.lng
         }
-      };
-      this.map = GoogleMaps.create('mapRequest', mapOptions);
-      this.map.on(GoogleMapsEvent.MAP_CLICK).subscribe(([latLng]: [LatLng]) => {
-        this.chosenCoordinates = {lat: latLng.lat, lon: latLng.lng};
-        this.map.clear();
-        this.map.addMarker({
-          title: '',
-          position: {
-            lat: latLng.lat,
-            lng: latLng.lng
-          }
-        });
       });
     });
   }

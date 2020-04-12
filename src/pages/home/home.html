@@ -15,9 +15,9 @@
     <button ion-fab color="primary" (click)="onClickAddRequest()"><ion-icon name="add" ></ion-icon></button>
   </ion-fab>
   <div class="slideContainer">
-    <ion-range [(ngModel)]="radius" (ionChange)="valueChanged()" min="0.5" max="10">
+    <ion-range [(ngModel)]="radius" (ionChange)="valueChanged()" min="0.5" max="20">
       <ion-label range-left slot="start">500m</ion-label>
-      <ion-label range-right slot="end">10km</ion-label>
+      <ion-label range-right slot="end">20km</ion-label>
     </ion-range>
   </div>
 </ion-content>
