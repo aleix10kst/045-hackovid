@@ -28,6 +28,7 @@
     "@ionic-native/splash-screen": "~4.17.0",
     "@ionic-native/status-bar": "~4.17.0",
     "@ionic/storage": "2.2.0",
+    "cordova-android": "8.1.0",
     "cordova-browser": "6.0.0",
     "cordova-plugin-googlemaps": "^2.7.1",
     "firebase": "^7.13.2",
@@ -62,7 +63,8 @@
       "cordova-plugin-geolocation": {}
     },
     "platforms": [
-      "browser"
+      "browser",
+      "android"
     ]
   }
 }
