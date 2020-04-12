@@ -1,33 +1,17 @@
-<ion-header>
-  <ion-navbar>
-    <button ion-button menuToggle>
-      <ion-icon name="menu"></ion-icon>
-    </button>
-    <ion-title>Home</ion-title>
-  </ion-navbar>
-</ion-header>
-
-<ion-content  no-padding >
+<ion-content  no-bounce no-padding >
+  <ion-fab left top>
+    <button ion-fab menuToggle color="primary"><ion-icon ios="ios-menu" md="md-menu"></ion-icon></button>
+  </ion-fab>
 
   <div id="map"></div>
 
-  <!--<div *ngIf="selectedRequest" class="requestLabel">
-    <h2>{{ selectedRequest.title }}</h2>
-      <h3>Location</h3>
-      <p>{{ selectedRequest.description}}</p>
-      <button ion-button secondary *ngIf="selectedRequest.status === 'pending'">
-        Acceptar Peticio
-    </button>
-  </div>-->
-
-  <ion-fab right bottom *ngIf="canAddRequests">
+  <ion-fab left bottom *ngIf="canAddRequests">
     <button ion-fab color="primary" (click)="onClickAddRequest()"><ion-icon name="add" ></ion-icon></button>
   </ion-fab>
   <div class="slideContainer">
-    <ion-badge color="primary">{{radius}}Kms</ion-badge>
-    <ion-range [(ngModel)]="radius" (ionChange)="valueChanged($event)" min="5" max="100" step="5" snaps="true" color="primary">
-      <ion-label slot="start">5</ion-label>
-      <ion-label slot="end">100</ion-label>
+    <ion-range [(ngModel)]="radius" (ionChange)="valueChanged()" min="0.5" max="20">
+      <ion-label range-left slot="start">500m</ion-label>
+      <ion-label range-right slot="end">20km</ion-label>
     </ion-range>
   </div>
 </ion-content>

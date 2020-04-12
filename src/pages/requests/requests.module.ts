@@ -4,12 +4,18 @@ import {CreatedRequestsTab} from "./components/created-requests";
 import {AcceptedRequestsTab} from "./components/accepted-requests";
 import {CommonModule} from "@angular/common";
 import {IonicPageModule} from "ionic-angular";
+import {CompletedRequestsTab} from "./components/completed-requests";
+import {StatusPipe} from "./pipes/status.pipe";
+import {EditRequestPage} from "./components/edit-request";
 
 @NgModule({
   declarations: [
     MyRequestsPage,
     CreatedRequestsTab,
-    AcceptedRequestsTab
+    AcceptedRequestsTab,
+    CompletedRequestsTab,
+    EditRequestPage,
+    StatusPipe
   ],
   imports: [
     CommonModule,
@@ -18,7 +24,9 @@ import {IonicPageModule} from "ionic-angular";
   entryComponents: [
     MyRequestsPage,
     CreatedRequestsTab,
-    AcceptedRequestsTab
+    AcceptedRequestsTab,
+    CompletedRequestsTab,
+    EditRequestPage
   ],
   exports: [
     MyRequestsPage

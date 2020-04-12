@@ -19,7 +19,17 @@
   width: 120px;
 }
 
-#mapSelector{
+#mapRequest{
   height: 300px;
   width: 100%;
+}
+
+#map{
+  height:100%;
+  width:100%;
+  color:blue
+}
+
+.scroll-content{
+  overflow-y:auto;
 }

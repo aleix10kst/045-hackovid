@@ -11,3 +11,13 @@
 - per iniciar l'app:
  - ionic serve
 
+ Afegits CAPACITORS per android i ios:
+https://capacitor.ionicframework.com/docs/getting-started/with-ionic/
+
+npm i -g cordova::
+ionic cordova run browser -l
+
+
+
+
+

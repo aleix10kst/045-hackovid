@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      {{ form.get('title').value }}
+    </ion-title>
+    <ion-buttons start>
+      <button ion-button (click)="onClickDismiss()">
+        <span ion-text color="primary">Tanca</span>
+      </button>
+    </ion-buttons>
+    <ion-buttons end>
+      <button ion-button (click)="onClickSave()">
+        <span ion-text color="primary">Edita</span>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <form [formGroup]="form" padding-vertical>
+    <ion-list>
+      <ion-item>
+        <ion-label floating>Títol</ion-label>
+        <ion-input type="text" formControlName="title"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Descripció</ion-label>
+        <ion-textarea rows="6" formControlName="description"></ion-textarea>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Informació de contacte</ion-label>
+        <ion-input placeholder="Nom" formControlName="name"></ion-input>
+        <ion-input placeholder="Telèfon" formControlName="phone"></ion-input>
+        <ion-input placeholder="Correu electrònic" formControlName="email"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Data d'entrega (opcional)</ion-label>
+        <ion-datetime displayFormat="MM/DD/YYYY" formControlName="deliveryDate"></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Adreça</ion-label>
+      </ion-item>
+      <div id="mapRequest"></div>
+    </ion-list>
+    <button ion-button color="danger" block margin-top (click)="onClickDelete()">Elimina</button>
+  </form>
+</ion-content>

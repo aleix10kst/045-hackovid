@@ -3,11 +3,11 @@
     <ion-list-header>{{ title }}</ion-list-header>
     <ng-container *ngIf="requests | async as requests">
       <ng-container *ngIf="requests.length > 0; else noItems">
-        <ion-item *ngFor="let request of requests">
+        <a ion-item *ngFor="let request of requests" (click)="onClickItem(request.uuid)">
           <h2>{{ request.title }}</h2>
-          <h3>Location</h3>
+          <h3>{{ request.status | status }}</h3>
           <p>{{ request.description}}</p>
-        </ion-item>
+        </a>
       </ng-container>
     </ng-container>
   </ion-list>

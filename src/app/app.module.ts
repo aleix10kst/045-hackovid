@@ -19,9 +19,9 @@ import {RequestsModule} from "../pages/requests/requests.module";
 import {CreateRequestPage} from "../pages/create-request/create-request";
 import {UserSevice} from "../services/user.sevice";
 import { NotaLegalPage } from "../pages/nota-legal/nota-legal";
+import { Geolocation } from '@ionic-native/geolocation';
 
 const firebaseConfig = {
-
 };
 
 @NgModule({
@@ -54,6 +54,7 @@ const firebaseConfig = {
     NotaLegalPage,
   ],
   providers: [
+    Geolocation,
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},

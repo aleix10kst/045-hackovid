@@ -1,7 +1,7 @@
 import {Component, OnInit} from "@angular/core";
 import {AngularFirestore, AngularFirestoreDocument} from "@angular/fire/firestore";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Loading, LoadingController, NavController} from "ionic-angular";
+import {Loading, LoadingController} from "ionic-angular";
 import {User} from "../../models/user";
 import {UserSevice} from "../../services/user.sevice";
 
@@ -18,7 +18,7 @@ export class UserPage implements OnInit{
 
   loader: Loading;
 
-  constructor(private afs: AngularFirestore, private fb: FormBuilder, private loadingCtrl: LoadingController, private navController: NavController, private userService: UserSevice) {
+  constructor(private afs: AngularFirestore, private fb: FormBuilder, private loadingCtrl: LoadingController, private userService: UserSevice) {
     this.loader = this.loadingCtrl.create({
       content: 'Carregant...'
     });

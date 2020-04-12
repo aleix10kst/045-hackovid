@@ -1,7 +1,7 @@
 {
-  "name": "myApp",
+  "name": "hackovid",
   "integrations": {
-    "capacitor": {}
+    "cordova": {}
   },
   "type": "ionic-angular"
 }
