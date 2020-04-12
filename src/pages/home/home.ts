@@ -38,6 +38,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   private markers: Marker[];
   private markerPosition: Marker;
   private geolocationSubscription:Subscription;
+  private interval:any;
 
   constructor(
     private geolocation: Geolocation,
@@ -61,8 +62,8 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
     this.platform.ready().then(() => {
       Environment.setEnv({
-        'API_KEY_FOR_BROWSER_RELEASE': 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-        'API_KEY_FOR_BROWSER_DEBUG': 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+        'API_KEY_FOR_BROWSER_RELEASE': 'XXXXXXXXXXXXXXXXXXXXXXXX',
+        'API_KEY_FOR_BROWSER_DEBUG': 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
       });
       this.initializeMap();
       this.subscriptions();
@@ -111,11 +112,11 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     this.geo.query('requests').within(this.currentPoint, this.radius, 'location').subscribe((requests: GeoQueryDocument[]) => {
       this.clearMarkers();
       requests.forEach((request: any) => {
-        let iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=P&size=50&hoffset=1&background=FACF1B";//groc
+        let iconsrc = "../../assets/imgs/pinYellow.png";//groc
         if (request.status === "accepted") {
-          iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=A&size=50&hoffset=1&background=598BF7";//blau
+          iconsrc = "../../assets/imgs/pinBlue.png";//blau
         } else if (request.status === "completed") {
-          iconsrc = "http://cdn.mapmarker.io/api/v1/pin?text=C&size=50&hoffset=1&background=0EE548";//verd
+          iconsrc = "../../assets/imgs/pinGreen.png";//verd
         }
         let icon = {} as MarkerIcon;
         icon["url"] = iconsrc;
@@ -125,7 +126,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
         let marker = this.map.addMarkerSync({
           icon: icon,
-          animation: 'DROP',
           position: {
             lat: request.location.geopoint.latitude,
             lng: request.location.geopoint.longitude
@@ -254,7 +254,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
       let icon = {} as MarkerIcon;
       icon["size"] = {};
-      icon["url"] = 'assets/imgs/myPos.svg';
+      icon["url"] = '../../assets/imgs/myPos.png';
       icon["size"]["width"] = 40;
       icon["size"]["height"] = 40;
 
@@ -270,16 +270,21 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private subscriptions(){
+
     this.geolocationSubscription =
-          this.geolocation.watchPosition().subscribe(position => {
-            this.userSevice.setCurrentLocation({lat: position.coords.latitude, lon: position.coords.longitude});
-            this.currentPoint = this.geo.point(position.coords.latitude, position.coords.longitude);
-            this.paintMap();
-          });
+      this.geolocation.watchPosition().subscribe(position => {
+        this.userSevice.setCurrentLocation({lat: position.coords.latitude, lon: position.coords.longitude});
+        this.currentPoint = this.geo.point(position.coords.latitude, position.coords.longitude);
+        this.updateMarkerPosition( position.coords.longitude, position.coords.latitude);
+      });
+    this.interval = setInterval(()=>{
+      this.paintMap();
+    },60000)
   }
 
   ngOnDestroy(): void {
     this.map.off(GoogleMapsEvent.MARKER_CLICK);
     this.geolocationSubscription.unsubscribe();
+    clearInterval(this.interval);
   }
 }
