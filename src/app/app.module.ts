@@ -18,8 +18,8 @@ import {LoginService} from "../services/login.service";
 import {RequestsModule} from "../pages/requests/requests.module";
 import {CreateRequestPage} from "../pages/create-request/create-request";
 import {UserSevice} from "../services/user.sevice";
-import { NotaLegalPage } from "../pages/nota-legal/nota-legal";
 import { Geolocation } from '@ionic-native/geolocation';
+import {NotaLegalModule} from "../pages/nota-legal/nota-legal.module";
 
 const firebaseConfig = {
 };
@@ -31,8 +31,7 @@ const firebaseConfig = {
     UserPage,
     RegisterPage,
     LoginPage,
-    CreateRequestPage,
-    NotaLegalPage
+    CreateRequestPage
   ],
   imports: [
     BrowserModule,
@@ -41,6 +40,7 @@ const firebaseConfig = {
     AngularFireAuthModule,
     ReactiveFormsModule,
     RequestsModule,
+    NotaLegalModule,
     IonicModule.forRoot(MyApp),
   ],
   bootstrap: [IonicApp],
@@ -50,8 +50,7 @@ const firebaseConfig = {
     UserPage,
     RegisterPage,
     LoginPage,
-    CreateRequestPage,
-    NotaLegalPage,
+    CreateRequestPage
   ],
   providers: [
     Geolocation,
