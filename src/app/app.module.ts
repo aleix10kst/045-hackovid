@@ -17,8 +17,8 @@ import {AngularFireAuthModule} from "@angular/fire/auth";
 import {LoginService} from "../services/login.service";
 import {RequestsModule} from "../pages/requests/requests.module";
 import {CreateRequestPage} from "../pages/create-request/create-request";
-import { EntitatsPage } from '../pages/entitats/entitats';
 import {UserSevice} from "../services/user.sevice";
+import { NotaLegalPage } from "../pages/nota-legal/nota-legal";
 
 const firebaseConfig = {
 
@@ -32,7 +32,7 @@ const firebaseConfig = {
     RegisterPage,
     LoginPage,
     CreateRequestPage,
-    EntitatsPage
+    NotaLegalPage
   ],
   imports: [
     BrowserModule,
@@ -51,7 +51,7 @@ const firebaseConfig = {
     RegisterPage,
     LoginPage,
     CreateRequestPage,
-    EntitatsPage,
+    NotaLegalPage,
   ],
   providers: [
     StatusBar,

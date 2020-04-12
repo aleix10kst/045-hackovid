@@ -4,11 +4,11 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { HomePage } from '../pages/home/home';
-import { EntitatsPage } from '../pages/entitats/entitats';
 import {UserPage} from "../pages/user/user";
 import {LoginPage} from "../pages/login/login";
 import {LoginService} from "../services/login.service";
 import {MyRequestsPage} from "../pages/requests/my-requests";
+import { NotaLegalPage } from "../pages/nota-legal/nota-legal";
 
 @Component({
   templateUrl: 'app.html'
@@ -27,8 +27,8 @@ export class MyApp implements OnInit{
     this.pages = [
       { title: 'Home', component: HomePage },
       { title: 'Les meves peticions', component: MyRequestsPage},
-      { title: 'Entitats de voluntariat', component: EntitatsPage},
-      { title: 'Perfil', component: UserPage}
+      { title: 'Perfil', component: UserPage},
+      { title: 'Nota Legal', component: NotaLegalPage}
     ];
   }
 
